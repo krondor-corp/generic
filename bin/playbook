@@ -29,8 +29,7 @@ fi
 
 # Remote playbooks: wrap in confit ssh agent
 if [ -z "${CONFIT_SSH:-}" ]; then
-    ssh_user="${ANSIBLE_SSH_USER:-admin}"
-    exec confit ssh --key "credentials.ssh.${ssh_user}.private_key" -- "$0" "$cmd" "$@"
+    exec confit ssh --key credentials.ssh.private_key -- "$0" "$cmd" "$@"
 fi
 
 server_ip=$(confit --set stage=production resolve credentials.server.ip)

@@ -5,32 +5,23 @@ cmd = "op read {uri}"
 cmd = "terraform -chdir=iac/stages/{stage} output -raw {path}"
 
 [project]
-name = "my-project"
+name = "krondor-generic"
 users = ["admin", "kamal"]
 admin_user = "admin"
-admin_email = "you@example.com"
-tfc_org = "my-org"
+admin_email = "alex@getquotient.ai"
+tfc_org = "krondor-generic-org"
 dns_root_zone = "example.com"
 
 [vaults]
-server = "my-project-server"
 cloud = "cloud-providers"
-app = "my-project-production"
+app = "krondor-generic-production"
 
 [credentials.server]
 ip = "tf://server_ip"
 
-[credentials.ssh.root]
-private_key = "secret://op://{vaults.server}/ssh-key-root/private_key"
-public_key = "op://{vaults.server}/ssh-key-root/public_key"
-
-[credentials.ssh.admin]
-private_key = "secret://op://{vaults.server}/ssh-key-admin/private_key"
-public_key = "op://{vaults.server}/ssh-key-admin/public_key"
-
-[credentials.ssh.kamal]
-private_key = "secret://op://{vaults.server}/ssh-key-kamal/private_key"
-public_key = "op://{vaults.server}/ssh-key-kamal/public_key"
+[credentials.ssh]
+private_key = "secret://tf://ssh_private_key"
+public_key = "tf://ssh_public_key"
 
 [credentials.cloud]
 docker_hub_token = "secret://op://{vaults.cloud}/DOCKER_HUB_TOKEN/credential"
@@ -45,12 +36,12 @@ google_oauth_client_secret = "secret://op://{vaults.app}/GOOGLE_OAUTH/client_sec
 anthropic_api_key = "secret://op://{vaults.app}/ANTHROPIC_API_KEY/credential"
 
 [services.static]
-repo = "user/my-project"
+repo = "amiller68/generic"
 domain = "{project.dns_root_zone}"
 port = 8080
 
 [services.py]
-repo = "user/my-project"
+repo = "amiller68/generic"
 domain = "py.{project.dns_root_zone}"
 port = 8000
 
@@ -61,12 +52,12 @@ HOST_NAME = "https://{services.py.domain}"
 DEBUG = "false"
 
 [services.ts-web]
-repo = "user/my-project"
+repo = "amiller68/generic"
 domain = "ts.{project.dns_root_zone}"
 port = 3000
 
 [services.rust]
-repo = "user/my-project"
+repo = "amiller68/generic"
 domain = "rust.{project.dns_root_zone}"
 port = 3000
 

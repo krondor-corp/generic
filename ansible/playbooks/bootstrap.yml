@@ -11,7 +11,7 @@
   vars:
     admin_user: "{{ lookup('pipe', 'confit resolve project.admin_user') }}"
     users: "{{ lookup('pipe', 'confit resolve project.users') }}"
-    user_public_keys: "{{ lookup('pipe', 'confit show --yaml --reveal credentials.ssh') | from_yaml }}"
+    ssh_public_key: "{{ lookup('pipe', 'confit --set stage=production resolve credentials.ssh.public_key') }}"
 
   tasks:
     - name: Install dependencies and Docker

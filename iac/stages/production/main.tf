@@ -2,9 +2,10 @@ locals {
   name_prefix = "${var.project_name}-production"
 }
 
-resource "digitalocean_ssh_key" "root" {
-  name       = "${local.name_prefix}-root"
-  public_key = var.root_public_key
+module "ssh_key" {
+  source = "../../modules/digitalocean/ssh_key"
+
+  name = "${local.name_prefix}-ssh-key"
 }
 
 module "droplet" {
@@ -13,7 +14,7 @@ module "droplet" {
   name     = "${local.name_prefix}-droplet"
   region   = var.region
   size     = var.size
-  ssh_keys = [digitalocean_ssh_key.root.id]
+  ssh_keys = [module.ssh_key.id]
   tags     = [var.project_name, "production"]
 }
 

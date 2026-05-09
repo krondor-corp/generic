@@ -6,7 +6,7 @@ SERVER_IP=$(confit --set stage=production resolve credentials.server.ip)
 
 confit log "Connecting to $USER@$SERVER_IP"
 
-exec confit ssh --key "credentials.ssh.${USER}.private_key" -- \
+exec confit ssh --key credentials.ssh.private_key -- \
     ssh -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o LogLevel=ERROR \

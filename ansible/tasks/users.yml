@@ -49,21 +49,14 @@
     mode: "0700"
   loop: "{{ users.split() }}"
 
-- name: Install user SSH public keys
+- name: Install SSH public key for all users
   ansible.builtin.copy:
-    content: "{{ user_public_keys[item].public_key }}\n"
+    content: "{{ ssh_public_key }}\n"
     dest: "/etc/ssh/authorized/{{ item }}/authorized_keys"
     owner: "{{ item }}"
     group: "{{ item }}"
     mode: "0600"
   loop: "{{ users.split() }}"
-
-- name: Add admin key to all user authorized_keys
-  ansible.builtin.lineinfile:
-    path: "/etc/ssh/authorized/{{ item }}/authorized_keys"
-    line: "{{ user_public_keys[admin_user].public_key }}"
-  loop: "{{ users.split() }}"
-  when: item != admin_user
 
 # SSH hardening
 - name: Harden sshd_config

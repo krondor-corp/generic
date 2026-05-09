@@ -24,7 +24,7 @@ if [[ $# -lt 2 ]]; then
 fi
 
 if [ -z "${CONFIT_SSH:-}" ]; then
-    exec confit ssh --key credentials.ssh.kamal.private_key -- "$0" "$@"
+    exec confit ssh --key credentials.ssh.private_key -- "$0" "$@"
 fi
 
 SERVICE="$1"

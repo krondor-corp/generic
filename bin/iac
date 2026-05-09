@@ -32,7 +32,6 @@ if [ ! -d "$STAGE_DIR" ]; then
 fi
 
 export TF_VAR_project_name=$(confit resolve project.name)
-export TF_VAR_root_public_key=$(confit resolve credentials.ssh.root.public_key)
 export DIGITALOCEAN_TOKEN=$(confit resolve --reveal credentials.cloud.digitalocean_token)
 export TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token)
 
