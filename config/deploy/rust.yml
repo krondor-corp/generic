@@ -33,9 +33,9 @@ env:
     - GOOGLE_O_AUTH_CLIENT_ID
     - GOOGLE_O_AUTH_CLIENT_SECRET
   clear:
-    SQLITE_DATABASE_URL: <%= `confit resolve services.rust.env.SQLITE_DATABASE_URL`.strip %>
-    LISTEN_ADDRESS: <%= `confit resolve services.rust.env.LISTEN_ADDRESS`.strip %>
-    HOST_NAME: <%= `confit resolve services.rust.env.HOST_NAME`.strip %>
+    SQLITE_DATABASE_URL: sqlite:///data/app.db
+    LISTEN_ADDRESS: 0.0.0.0:3000
+    HOST_NAME: https://<%= `confit resolve services.rust.domain`.strip %>
     LOG_LEVEL: info
 
 volumes:

@@ -41,16 +41,15 @@ ANSIBLE_SSH_USER=root make bootstrap
 make dns
 
 # 7. Deploy your service
-make kamal ARGS="static setup"
+make kamal ARGS="py setup"
 ```
 
 ## Services
 
-This template includes deploy configs for 4 service types:
+Deploy configs for 3 service types (static site is GitHub Pages, not Kamal):
 
 | Service | Stack | Config |
 |---------|-------|--------|
-| `static` | Nginx static site | `config/deploy/static.yml` |
 | `py` | Python (FastAPI) + Postgres + Redis | `config/deploy/py.yml` |
 | `ts-web` | TypeScript/Vite SPA | `config/deploy/ts-web.yml` |
 | `rust` | Rust (Axum) + SQLite | `config/deploy/rust.yml` |

@@ -34,9 +34,9 @@ env:
     - GOOGLE_O_AUTH_CLIENT_SECRET
     - ANTHROPIC_API_KEY
   clear:
-    POSTGRES_URL: <%= `confit resolve services.py.env.POSTGRES_URL`.strip %>
-    REDIS_URL: <%= `confit resolve services.py.env.REDIS_URL`.strip %>
-    HOST_NAME: <%= `confit resolve services.py.env.HOST_NAME`.strip %>
+    POSTGRES_URL: postgresql://postgres:postgres@<%= `confit resolve project.name`.strip %>-py-postgres:5432/postgres
+    REDIS_URL: redis://<%= `confit resolve project.name`.strip %>-py-redis:6379
+    HOST_NAME: https://<%= `confit resolve services.py.domain`.strip %>
     DEBUG: "false"
 
 accessories:
