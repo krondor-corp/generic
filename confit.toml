@@ -1,0 +1,46 @@
+[providers.op]
+cmd = "op read {uri}"
+
+[providers.tf]
+cmd = "terraform -chdir=iac/stages/{stage} output -raw {path}"
+
+[project]
+name = "my-project"
+users = ["admin", "kamal"]
+admin_user = "admin"
+admin_email = "you@example.com"
+tfc_org = "my-org"
+
+[vaults]
+server = "my-project-server"
+cloud = "cloud-providers"
+
+[credentials.server]
+ip = "tf://server_ip"
+
+[credentials.ssh.root]
+private_key = "secret://op://{vaults.server}/ssh-key-root/private_key"
+public_key = "op://{vaults.server}/ssh-key-root/public_key"
+
+[credentials.ssh.admin]
+private_key = "secret://op://{vaults.server}/ssh-key-admin/private_key"
+public_key = "op://{vaults.server}/ssh-key-admin/public_key"
+
+[credentials.ssh.kamal]
+private_key = "secret://op://{vaults.server}/ssh-key-kamal/private_key"
+public_key = "op://{vaults.server}/ssh-key-kamal/public_key"
+
+[credentials.cloud]
+docker_hub_token = "secret://op://{vaults.cloud}/DOCKER_HUB_TOKEN/credential"
+cloudflare_api_token = "secret://op://{vaults.cloud}/CLOUDFLARE_API_TOKEN/credential"
+cloudflare_account_id = "op://{vaults.cloud}/CLOUDFLARE_API_TOKEN/username"
+digitalocean_token = "secret://op://{vaults.cloud}/DIGITALOCEAN_TOKEN/credential"
+tfc_token = "secret://op://{vaults.cloud}/TFC_TOKEN/credential"
+
+[services.my-app]
+repo = "user/my-app"
+domain = "my-app.example.com"
+port = 3000
+
+[services.my-app.env]
+NODE_ENV = "production"

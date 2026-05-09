@@ -1,0 +1,36 @@
+service: my-app
+deploy_timeout: 180
+image: user/my-app
+
+servers:
+  web:
+    - <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+
+ssh:
+  user: kamal
+
+registry:
+  username: user
+  password:
+    - DOCKER_HUB_TOKEN
+
+builder:
+  dockerfile: services/my-app/Dockerfile
+  context: services/my-app
+  arch: amd64
+  cache:
+    type: registry
+
+proxy:
+  ssl: true
+  host: <%= `confit resolve services.my-app.domain`.strip %>
+  app_port: <%= `confit resolve services.my-app.port`.strip %>
+  healthcheck:
+    path: /
+
+env:
+  clear:
+    NODE_ENV: production
+
+volumes:
+  - /var/lib/kamal-volumes/my-app/data:/app/data

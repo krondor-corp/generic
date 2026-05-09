@@ -1,0 +1,41 @@
+#!/bin/bash
+set -euo pipefail
+
+usage() {
+    confit log "Terraform Wrapper"
+    echo ""
+    echo "Usage: $0 <stage> <terraform command> [args...]"
+    echo ""
+    echo "Stages:"
+    for d in iac/stages/*/; do
+        [ -d "$d" ] && echo "  $(basename "$d")"
+    done
+    echo ""
+    echo "Examples:"
+    echo "  $0 production plan"
+    echo "  $0 production apply"
+    echo "  $0 production output server_ip"
+    exit 1
+}
+
+if [[ $# -lt 2 ]]; then
+    usage
+fi
+
+STAGE="$1"
+shift
+
+STAGE_DIR="iac/stages/$STAGE"
+if [ ! -d "$STAGE_DIR" ]; then
+    confit log --err "Unknown stage: $STAGE"
+    exit 1
+fi
+
+export TF_VAR_project_name=$(confit resolve project.name)
+export TF_VAR_root_public_key=$(confit resolve credentials.ssh.root.public_key)
+export DIGITALOCEAN_TOKEN=$(confit resolve --reveal credentials.cloud.digitalocean_token)
+export TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token)
+
+confit log "Running terraform $1 in $STAGE"
+
+terraform -chdir="$STAGE_DIR" "$@"

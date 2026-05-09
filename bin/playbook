@@ -1,0 +1,42 @@
+#!/bin/bash
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+cmd="${1:-help}"
+shift || true
+
+if [ "$cmd" = "help" ] || [ "$cmd" = "--help" ]; then
+    echo "Usage: $0 <playbook> [ansible args...]"
+    echo ""
+    echo "Playbooks:"
+    for f in "$PROJECT_ROOT/ansible/playbooks/"*.yml; do
+        [ -f "$f" ] && echo "  $(basename "$f" .yml)"
+    done
+    exit 0
+fi
+
+playbook="$PROJECT_ROOT/ansible/playbooks/${cmd}.yml"
+if [ ! -f "$playbook" ]; then
+    confit log --err "Unknown playbook: $cmd"
+    exit 1
+fi
+
+# Local playbooks (connection: local in the YAML) don't need SSH or remote inventory
+if grep -q "connection: local" "$playbook"; then
+    exec ansible-playbook -i localhost, "$@" "$playbook"
+fi
+
+# Remote playbooks: wrap in confit ssh agent
+if [ -z "${CONFIT_SSH:-}" ]; then
+    ssh_user="${ANSIBLE_SSH_USER:-admin}"
+    exec confit ssh --key "credentials.ssh.${ssh_user}.private_key" -- "$0" "$cmd" "$@"
+fi
+
+server_ip=$(confit --set stage=production resolve credentials.server.ip)
+
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+    -i "$server_ip," \
+    -u "${ANSIBLE_SSH_USER:-admin}" \
+    "$@" \
+    "$playbook"

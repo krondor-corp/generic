@@ -1,0 +1,36 @@
+---
+# Bootstrap a fresh server.
+# Idempotent — safe to re-run.
+#
+# Server-level provisioning only: packages, Docker, users, SSH, firewall.
+
+- name: Bootstrap server
+  hosts: all
+  become: true
+
+  vars:
+    admin_user: "{{ lookup('pipe', 'confit resolve project.admin_user') }}"
+    users: "{{ lookup('pipe', 'confit resolve project.users') }}"
+    user_public_keys: "{{ lookup('pipe', 'confit show --yaml --reveal credentials.ssh') | from_yaml }}"
+
+  tasks:
+    - name: Install dependencies and Docker
+      ansible.builtin.include_tasks:
+        file: ../tasks/dependencies.yml
+        apply:
+          tags: [deps]
+      tags: [deps]
+
+    - name: Create users and harden SSH
+      ansible.builtin.include_tasks:
+        file: ../tasks/users.yml
+        apply:
+          tags: [users]
+      tags: [users]
+
+    - name: Configure firewall
+      ansible.builtin.include_tasks:
+        file: ../tasks/firewall.yml
+        apply:
+          tags: [firewall]
+      tags: [firewall]

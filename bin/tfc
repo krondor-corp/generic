@@ -1,0 +1,107 @@
+#!/bin/bash
+set -euo pipefail
+
+TFC_API="https://app.terraform.io/api/v2"
+
+usage() {
+    confit log "Terraform Cloud Workspace Manager"
+    echo ""
+    echo "Usage: $0 <command>"
+    echo ""
+    echo "Commands:"
+    echo "  setup    Create org + workspaces for all stages"
+    echo "  status   Show org and workspace status"
+    echo ""
+    echo "Reads project name from confit.toml and TFC token from 1Password."
+    exit 1
+}
+
+get_token() {
+    confit resolve --reveal credentials.cloud.tfc_token
+}
+
+get_org() {
+    confit resolve project.tfc_org
+}
+
+api() {
+    local method="$1" path="$2"
+    shift 2
+    curl -s -X "$method" \
+        -H "Authorization: Bearer $(get_token)" \
+        -H "Content-Type: application/vnd.api+json" \
+        "$@" \
+        "${TFC_API}${path}"
+}
+
+create_org() {
+    local org
+    org=$(get_org)
+    local email
+    email=$(confit resolve project.admin_email)
+
+    confit log "Creating organization: $org"
+    api POST "/organizations" -d '{
+        "data": {
+            "type": "organizations",
+            "attributes": {
+                "name": "'"$org"'",
+                "email": "'"$email"'"
+            }
+        }
+    }' | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('id','already exists'))" 2>/dev/null || true
+}
+
+create_workspace() {
+    local org workspace
+    org=$(get_org)
+    workspace="$1"
+
+    confit log "Creating workspace: $workspace"
+    api POST "/organizations/$org/workspaces" -d '{
+        "data": {
+            "type": "workspaces",
+            "attributes": {
+                "name": "'"$workspace"'",
+                "execution-mode": "local"
+            }
+        }
+    }' | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('id','already exists'))" 2>/dev/null || true
+}
+
+cmd_setup() {
+    local project_name
+    project_name=$(confit resolve project.name)
+
+    create_org
+
+    for stage_dir in iac/stages/*/; do
+        stage=$(basename "$stage_dir")
+        create_workspace "${project_name}-${stage}"
+    done
+
+    confit log --ok "Terraform Cloud setup complete"
+}
+
+cmd_status() {
+    local org
+    org=$(get_org)
+
+    confit log "Organization: $org"
+    api GET "/organizations/$org/workspaces" | \
+        python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for ws in data.get('data', []):
+    name = ws['attributes']['name']
+    mode = ws['attributes'].get('execution-mode', '?')
+    print(f'  {name} (mode: {mode})')
+" 2>/dev/null || confit log --err "Failed to query workspaces"
+}
+
+cmd="${1:-help}"
+case "$cmd" in
+    setup)  cmd_setup ;;
+    status) cmd_status ;;
+    *)      usage ;;
+esac

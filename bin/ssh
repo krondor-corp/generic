@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+USER="${1:-admin}"
+SERVER_IP=$(confit --set stage=production resolve credentials.server.ip)
+
+confit log "Connecting to $USER@$SERVER_IP"
+
+exec confit ssh --key "credentials.ssh.${USER}.private_key" -- \
+    ssh -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o LogLevel=ERROR \
+        "$USER@$SERVER_IP"

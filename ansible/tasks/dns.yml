@@ -1,0 +1,11 @@
+---
+- name: Set DNS A records for services
+  community.general.cloudflare_dns:
+    zone: "{{ dns_root_zone }}"
+    record: "{{ item }}"
+    type: A
+    value: "{{ server_ip }}"
+    proxied: false
+    solo: true
+    api_token: "{{ cloudflare_api_token }}"
+  loop: "{{ service_subdomains }}"

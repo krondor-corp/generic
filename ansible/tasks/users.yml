@@ -1,0 +1,85 @@
+---
+# Admin user
+- name: Create admin group
+  ansible.builtin.group:
+    name: "{{ admin_user }}"
+    state: present
+
+- name: Create admin user
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    groups: "sudo,docker"
+    shell: /bin/bash
+    create_home: true
+
+- name: Grant admin passwordless sudo
+  ansible.builtin.copy:
+    content: "%{{ admin_user }} ALL=(ALL) NOPASSWD: ALL\n"
+    dest: "/etc/sudoers.d/{{ admin_user }}"
+    mode: "0440"
+    validate: "visudo -cf %s"
+
+# All other users
+- name: Create user accounts
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+    shell: /bin/bash
+    create_home: true
+  loop: "{{ users.split() }}"
+  when: item != admin_user
+
+# SSH keys
+- name: Create SSH authorized_keys base directory
+  ansible.builtin.file:
+    path: /etc/ssh/authorized
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create per-user authorized_keys directories
+  ansible.builtin.file:
+    path: "/etc/ssh/authorized/{{ item }}"
+    state: directory
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: "0700"
+  loop: "{{ users.split() }}"
+
+- name: Install user SSH public keys
+  ansible.builtin.copy:
+    content: "{{ user_public_keys[item].public_key }}\n"
+    dest: "/etc/ssh/authorized/{{ item }}/authorized_keys"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: "0600"
+  loop: "{{ users.split() }}"
+
+- name: Add admin key to all user authorized_keys
+  ansible.builtin.lineinfile:
+    path: "/etc/ssh/authorized/{{ item }}/authorized_keys"
+    line: "{{ user_public_keys[admin_user].public_key }}"
+  loop: "{{ users.split() }}"
+  when: item != admin_user
+
+# SSH hardening
+- name: Harden sshd_config
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: "^#?PermitRootLogin",        line: "PermitRootLogin no" }
+    - { regexp: "^#?PasswordAuthentication",  line: "PasswordAuthentication no" }
+    - { regexp: "^#?PubkeyAuthentication",    line: "PubkeyAuthentication yes" }
+    - { regexp: "^#?AuthorizedKeysFile",      line: "AuthorizedKeysFile /etc/ssh/authorized/%u/authorized_keys" }
+  register: sshd_config
+
+- name: Restart sshd
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  when: sshd_config.changed
