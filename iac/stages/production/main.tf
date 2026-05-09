@@ -25,3 +25,11 @@ module "project" {
   description = "${var.project_name} production"
   resources   = [module.droplet.urn]
 }
+
+module "dns" {
+  source = "../../modules/cloudflare/dns"
+
+  dns_root_zone = var.dns_root_zone
+  server_ip     = module.droplet.ipv4_address
+  subdomains    = var.subdomains
+}

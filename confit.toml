@@ -8,7 +8,7 @@ cmd = "terraform -chdir=iac/stages/{stage} output -raw {path}"
 name = "krondor-generic"
 users = ["admin", "kamal"]
 admin_user = "admin"
-admin_email = "alex@getquotient.ai"
+admin_email = "al@krondor.org"
 tfc_org = "krondor-generic-org"
 dns_root_zone = "example.com"
 

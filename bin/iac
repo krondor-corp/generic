@@ -32,7 +32,10 @@ if [ ! -d "$STAGE_DIR" ]; then
 fi
 
 export TF_VAR_project_name=$(confit resolve project.name)
+export TF_VAR_dns_root_zone=$(confit resolve project.dns_root_zone)
+export TF_VAR_subdomains='["'$(confit keys services | tr ' ' '\n' | while read svc; do confit resolve "services.${svc}.domain"; done | paste -sd'","' -)'"]'
 export DIGITALOCEAN_TOKEN=$(confit resolve --reveal credentials.cloud.digitalocean_token)
+export CLOUDFLARE_API_TOKEN=$(confit resolve --reveal credentials.cloud.cloudflare_api_token)
 export TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token)
 
 confit log "Running terraform $1 in $STAGE"

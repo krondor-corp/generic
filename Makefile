@@ -1,4 +1,4 @@
-.PHONY: help install bootstrap dns validate kamal ssh services infra tfc
+.PHONY: help install bootstrap validate kamal ssh services infra tfc
 
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_-]+:.*?##/ { printf "  %-20s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -17,9 +17,6 @@ infra: ## Run terraform (usage: make infra ARGS="plan" or ARGS="apply")
 
 bootstrap: ## Provision the server (packages, users, SSH, firewall)
 	@./bin/playbook bootstrap $(ARGS)
-
-dns: ## Set DNS A records for services
-	@./bin/playbook dns $(ARGS)
 
 validate: ## Validate all config values resolve
 	@confit validate

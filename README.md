@@ -30,17 +30,14 @@ vim confit.toml
 # 3. Setup Terraform Cloud
 make tfc
 
-# 4. Provision the droplet
+# 4. Provision droplet + DNS
 make infra ARGS="plan"
 make infra ARGS="apply"
 
 # 5. Bootstrap the server
 ANSIBLE_SSH_USER=root make bootstrap
 
-# 6. Set DNS records
-make dns
-
-# 7. Deploy your service
+# 6. Deploy your service
 make kamal ARGS="py setup"
 ```
 
@@ -68,12 +65,9 @@ make infra ARGS="apply"                # Apply infrastructure changes
 make bootstrap                         # Provision the server
 make bootstrap ARGS="--tags users"     # Just re-sync users/keys
 
-# DNS
-make dns                               # Set A records for services
-
 # Service management
 make services                          # List all services
-make kamal ARGS="static deploy"        # Deploy a service
+make kamal ARGS="py deploy"            # Deploy a service
 make kamal ARGS="py setup"             # First-time deploy
 
 # confit CLI
@@ -114,7 +108,7 @@ docs/                        # Documentation
 
 Everything flows through `confit.toml`:
 
-1. **Terraform** provisions the droplet. `bin/iac` exports secrets from confit as `TF_VAR_*` and runs terraform. The server IP is stored as a TF output.
+1. **Terraform** provisions the droplet, generates SSH keys, and sets DNS records. `bin/iac` exports secrets from confit as `TF_VAR_*` and env vars, then runs terraform. Server IP and SSH keys are stored as TF outputs.
 
 2. **Ansible** bootstraps the server. Playbooks self-serve their vars via `lookup('pipe', 'confit ...')`. `bin/playbook` handles the SSH agent and inventory.
 
@@ -124,8 +118,8 @@ Everything flows through `confit.toml`:
 
 ```
 confit.toml
-    ├── op:// → 1Password (SSH keys, API tokens)
-    ├── tf:// → Terraform outputs (server IP)
+    ├── op:// → 1Password (API tokens, cloud credentials)
+    ├── tf:// → Terraform outputs (server IP, SSH keys)
     └── {ref} → interpolation (vault names, project config)
 ```
 
@@ -137,7 +131,6 @@ confit.toml
 | [Tagging](docs/tagging.md) | Ansible tag pattern for selective runs |
 | [SSH Agent](docs/ssh-agent.md) | How confit ssh works, 1Password key format handling |
 | [Bootstrap](docs/playbooks/bootstrap.md) | Server provisioning |
-| [DNS](docs/playbooks/dns.md) | Cloudflare DNS records |
 
 ## Contributing
 
