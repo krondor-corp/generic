@@ -1,0 +1,57 @@
+service: <%= `confit resolve project.name`.strip %>-py
+deploy_timeout: 180
+image: <%= `confit resolve services.py.repo`.strip %>-py
+
+servers:
+  web:
+    - <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+
+ssh:
+  user: kamal
+
+registry:
+  username: <%= `confit resolve services.py.repo`.strip.split('/').first %>
+  password:
+    - DOCKER_HUB_TOKEN
+
+builder:
+  dockerfile: py/Dockerfile
+  context: .
+  arch: amd64
+  cache:
+    type: registry
+
+proxy:
+  ssl: true
+  host: <%= `confit resolve services.py.domain`.strip %>
+  app_port: <%= `confit resolve services.py.port`.strip %>
+  healthcheck:
+    path: /_status/livez
+
+env:
+  secret:
+    - GOOGLE_O_AUTH_CLIENT_ID
+    - GOOGLE_O_AUTH_CLIENT_SECRET
+    - ANTHROPIC_API_KEY
+  clear:
+    POSTGRES_URL: <%= `confit resolve services.py.env.POSTGRES_URL`.strip %>
+    REDIS_URL: <%= `confit resolve services.py.env.REDIS_URL`.strip %>
+    HOST_NAME: <%= `confit resolve services.py.env.HOST_NAME`.strip %>
+    DEBUG: "false"
+
+accessories:
+  postgres:
+    image: postgres:17-alpine
+    port: 5432
+    env:
+      clear:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
+    directories:
+      - postgres-data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    port: 6379
+    directories:
+      - redis-data:/data

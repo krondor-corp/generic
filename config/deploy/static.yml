@@ -1,0 +1,32 @@
+service: <%= `confit resolve project.name`.strip %>-static
+deploy_timeout: 180
+image: <%= `confit resolve services.static.repo`.strip %>-static
+
+servers:
+  web:
+    - <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+
+ssh:
+  user: kamal
+
+registry:
+  username: <%= `confit resolve services.static.repo`.strip.split('/').first %>
+  password:
+    - DOCKER_HUB_TOKEN
+
+builder:
+  dockerfile: static/Dockerfile
+  context: .
+  arch: amd64
+  cache:
+    type: registry
+
+proxy:
+  ssl: true
+  host: <%= `confit resolve services.static.domain`.strip %>
+  app_port: <%= `confit resolve services.static.port`.strip %>
+  healthcheck:
+    path: /
+
+env:
+  clear: {}

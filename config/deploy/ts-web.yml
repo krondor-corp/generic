@@ -1,0 +1,32 @@
+service: <%= `confit resolve project.name`.strip %>-ts-web
+deploy_timeout: 180
+image: <%= `confit resolve services.ts-web.repo`.strip %>-ts-web
+
+servers:
+  web:
+    - <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+
+ssh:
+  user: kamal
+
+registry:
+  username: <%= `confit resolve services.ts-web.repo`.strip.split('/').first %>
+  password:
+    - DOCKER_HUB_TOKEN
+
+builder:
+  dockerfile: ts/apps/web/Dockerfile
+  context: .
+  arch: amd64
+  cache:
+    type: registry
+
+proxy:
+  ssl: true
+  host: <%= `confit resolve services.ts-web.domain`.strip %>
+  app_port: <%= `confit resolve services.ts-web.port`.strip %>
+  healthcheck:
+    path: /
+
+env:
+  clear: {}

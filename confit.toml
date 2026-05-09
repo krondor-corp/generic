@@ -10,10 +10,12 @@ users = ["admin", "kamal"]
 admin_user = "admin"
 admin_email = "you@example.com"
 tfc_org = "my-org"
+dns_root_zone = "example.com"
 
 [vaults]
 server = "my-project-server"
 cloud = "cloud-providers"
+app = "my-project-production"
 
 [credentials.server]
 ip = "tf://server_ip"
@@ -37,10 +39,39 @@ cloudflare_account_id = "op://{vaults.cloud}/CLOUDFLARE_API_TOKEN/username"
 digitalocean_token = "secret://op://{vaults.cloud}/DIGITALOCEAN_TOKEN/credential"
 tfc_token = "secret://op://{vaults.cloud}/TFC_TOKEN/credential"
 
-[services.my-app]
-repo = "user/my-app"
-domain = "my-app.example.com"
+[credentials.app]
+google_oauth_client_id = "secret://op://{vaults.app}/GOOGLE_OAUTH/client_id"
+google_oauth_client_secret = "secret://op://{vaults.app}/GOOGLE_OAUTH/client_secret"
+anthropic_api_key = "secret://op://{vaults.app}/ANTHROPIC_API_KEY/credential"
+
+[services.static]
+repo = "user/my-project"
+domain = "{project.dns_root_zone}"
+port = 8080
+
+[services.py]
+repo = "user/my-project"
+domain = "py.{project.dns_root_zone}"
+port = 8000
+
+[services.py.env]
+POSTGRES_URL = "postgresql://postgres:postgres@{project.name}-py-postgres:5432/postgres"
+REDIS_URL = "redis://{project.name}-py-redis:6379"
+HOST_NAME = "https://{services.py.domain}"
+DEBUG = "false"
+
+[services.ts-web]
+repo = "user/my-project"
+domain = "ts.{project.dns_root_zone}"
 port = 3000
 
-[services.my-app.env]
-NODE_ENV = "production"
+[services.rust]
+repo = "user/my-project"
+domain = "rust.{project.dns_root_zone}"
+port = 3000
+
+[services.rust.env]
+SQLITE_DATABASE_URL = "sqlite:///data/app.db"
+LISTEN_ADDRESS = "0.0.0.0:3000"
+HOST_NAME = "https://{services.rust.domain}"
+LOG_LEVEL = "info"

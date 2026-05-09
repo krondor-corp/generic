@@ -41,8 +41,21 @@ ANSIBLE_SSH_USER=root make bootstrap
 make dns
 
 # 7. Deploy your service
-make kamal ARGS="my-app setup"
+make kamal ARGS="static setup"
 ```
+
+## Services
+
+This template includes deploy configs for 4 service types:
+
+| Service | Stack | Config |
+|---------|-------|--------|
+| `static` | Nginx static site | `config/deploy/static.yml` |
+| `py` | Python (FastAPI) + Postgres + Redis | `config/deploy/py.yml` |
+| `ts-web` | TypeScript/Vite SPA | `config/deploy/ts-web.yml` |
+| `rust` | Rust (Axum) + SQLite | `config/deploy/rust.yml` |
+
+Dockerfiles live in the app repo, not here. Kamal builds from the app repo using `builder.dockerfile` paths.
 
 ## Quick Reference
 
@@ -61,14 +74,14 @@ make dns                               # Set A records for services
 
 # Service management
 make services                          # List all services
-make kamal ARGS="my-app deploy"        # Deploy a service
-make kamal ARGS="my-app setup"         # First-time deploy
+make kamal ARGS="static deploy"        # Deploy a service
+make kamal ARGS="py setup"             # First-time deploy
 
 # confit CLI
 confit resolve project.name                            # Resolve a config value
 confit --set stage=production resolve credentials.server.ip  # Resolve with TF provider
 confit keys services                                   # List service names
-confit show services.my-app.env                        # Print KEY=VALUE pairs
+confit show services.py.env                            # Print KEY=VALUE pairs
 confit show --yaml --reveal credentials.ssh            # YAML output, unmasked
 confit ssh --key credentials.ssh.admin.private_key -- ssh admin@server
 
@@ -142,9 +155,9 @@ confit.toml
    NODE_ENV = "production"
    ```
 
-2. Create `services/my-new-app/Dockerfile`
+2. Create a Dockerfile in your app repo
 
-3. Create `config/deploy/my-new-app.yml` (use ERB + `confit resolve`)
+3. Create `config/deploy/my-new-app.yml` (use ERB + `confit resolve`, see existing configs for examples)
 
 4. Add secrets to `.kamal/secrets` if needed
 

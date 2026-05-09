@@ -1,0 +1,42 @@
+service: <%= `confit resolve project.name`.strip %>-rust
+deploy_timeout: 180
+image: <%= `confit resolve services.rust.repo`.strip %>-rust
+
+servers:
+  web:
+    - <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+
+ssh:
+  user: kamal
+
+registry:
+  username: <%= `confit resolve services.rust.repo`.strip.split('/').first %>
+  password:
+    - DOCKER_HUB_TOKEN
+
+builder:
+  dockerfile: rust/Dockerfile
+  context: .
+  arch: amd64
+  cache:
+    type: registry
+
+proxy:
+  ssl: true
+  host: <%= `confit resolve services.rust.domain`.strip %>
+  app_port: <%= `confit resolve services.rust.port`.strip %>
+  healthcheck:
+    path: /_status/livez
+
+env:
+  secret:
+    - GOOGLE_O_AUTH_CLIENT_ID
+    - GOOGLE_O_AUTH_CLIENT_SECRET
+  clear:
+    SQLITE_DATABASE_URL: <%= `confit resolve services.rust.env.SQLITE_DATABASE_URL`.strip %>
+    LISTEN_ADDRESS: <%= `confit resolve services.rust.env.LISTEN_ADDRESS`.strip %>
+    HOST_NAME: <%= `confit resolve services.rust.env.HOST_NAME`.strip %>
+    LOG_LEVEL: info
+
+volumes:
+  - /var/lib/kamal-volumes/<%= `confit resolve project.name`.strip %>-rust/data:/data
