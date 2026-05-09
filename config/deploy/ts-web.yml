@@ -15,8 +15,8 @@ registry:
     - DOCKER_HUB_TOKEN
 
 builder:
-  dockerfile: ts/apps/web/Dockerfile
-  context: .
+  dockerfile: web/ts/apps/web/Dockerfile
+  context: web
   arch: amd64
   cache:
     type: registry

@@ -3,3 +3,15 @@
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+target/
+.venv/
+
+# Build
+dist/
+.next/
+.turbo/

@@ -39,16 +39,16 @@ google_oauth_client_secret = "secret://op://{vaults.app}/GOOGLE_OAUTH/client_sec
 anthropic_api_key = "secret://op://{vaults.app}/ANTHROPIC_API_KEY/credential"
 
 [services.py]
-repo = "amiller68/generic"
+repo = "krondor-corp/generic"
 domain = "py.{project.dns_root_zone}"
 port = 8000
 
 [services.ts-web]
-repo = "amiller68/generic"
+repo = "krondor-corp/generic"
 domain = "ts.{project.dns_root_zone}"
 port = 3000
 
 [services.rust]
-repo = "amiller68/generic"
+repo = "krondor-corp/generic"
 domain = "rust.{project.dns_root_zone}"
 port = 3000

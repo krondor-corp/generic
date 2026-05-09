@@ -1,0 +1,39 @@
+{% macro feature_card(title, description, icon=None, badge=None) %}
+<div class="uk-card uk-card-body">
+    {% if badge %}
+    <div class="uk-card-badge uk-label">{{ badge }}</div>
+    {% endif %}
+    {% if icon %}
+    <uk-icon icon="{{ icon }}" ratio="2" class="mb-4"></uk-icon>
+    {% endif %}
+    <h3 class="uk-card-title">{{ title }}</h3>
+    <p class="mt-4">{{ description }}</p>
+</div>
+{% endmacro %}
+
+{% macro info_card(title, content) %}
+<div class="uk-card uk-card-body">
+    <h3 class="uk-card-title">{{ title }}</h3>
+    <div class="mt-4">{{ content|safe }}</div>
+</div>
+{% endmacro %}
+
+{% macro action_card(title, description, button_text, button_url, variant="default") %}
+<div class="uk-card uk-card-body {% if variant != 'default' %}uk-card-{{ variant }}{% endif %}">
+    <h3 class="uk-card-title">{{ title }}</h3>
+    <p class="mt-4">{{ description }}</p>
+    <div class="mt-6">
+        <a href="{{ button_url }}" class="uk-btn uk-btn-default">{{ button_text }}</a>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro stat_card(title, value, description=None) %}
+<div class="uk-card uk-card-body">
+    <h3 class="uk-card-title text-sm text-muted-foreground">{{ title }}</h3>
+    <p class="text-2xl font-bold mt-2">{{ value }}</p>
+    {% if description %}
+    <p class="text-sm text-muted-foreground mt-2">{{ description }}</p>
+    {% endif %}
+</div>
+{% endmacro %}

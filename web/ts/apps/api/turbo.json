@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "//"
+  ],
+  "tasks": {
+    "build": {
+      "env": [
+        "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    }
+  }
+}

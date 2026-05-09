@@ -1,0 +1,21 @@
+[project]
+name = "generic"
+version = "0.1.0"
+description = "generic -- a place to think"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[tool.uv.workspace]
+members = ["packages/py-*", "apps/py-*"]
+
+[tool.uv.sources]
+py-core = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.25.3",
+    "black",
+    "ruff",
+    "ty",
+]

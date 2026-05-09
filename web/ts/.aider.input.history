@@ -1,0 +1,73 @@
+
+# 2025-03-31 17:22:03.368876
++Y
+
+# 2025-03-31 17:22:31.932909
++N
+
+# 2025-03-31 17:22:38.867350
++fix pnpm i
+
+# 2025-03-31 17:23:47.973639
++/add package.json
+
+# 2025-03-31 17:42:46.727220
++N
+
+# 2025-03-31 17:42:52.750989
++can you fix pnpm dev for me
+
+# 2025-03-31 17:43:04.626782
++/add package.json
+
+# 2025-03-31 17:43:18.772390
++for some reason apps/api complains that the logger dists dont exist
+
+# 2025-03-31 17:43:51.688509
++/add turbo.json
+
+# 2025-03-31 17:44:08.912690
++/add packages/logger/package.json
+
+# 2025-03-31 17:44:28.388020
++RROR  run failed: command  exited (1)
++ ELIFECYCLE  Command failed with ex
+
+# 2025-03-31 17:45:04.594675
++N
+
+# 2025-03-31 17:45:07.729322
++it still didnt work
+
+# 2025-03-31 17:46:27.770767
++N
+
+# 2025-03-31 17:46:31.512118
++that dient work either fuckwit
+
+# 2025-03-31 17:46:56.776963
++Y
+
+# 2025-03-31 17:46:56.782366
++/run rm -rf packages/logger/dist
+
+# 2025-03-31 17:46:56.782950
++/run rm -rf packages/logger/dist
+
+# 2025-03-31 17:46:57.557132
++/run pnpm install
+
+# 2025-03-31 17:46:57.557205
++/run pnpm install
+
+# 2025-03-31 17:46:58.810770
++/run pnpm build
+
+# 2025-03-31 17:46:58.810837
++/run pnpm build
+
+# 2025-03-31 17:47:01.602237
++/run pnpm dev
+
+# 2025-03-31 17:47:01.602320
++/run pnpm dev

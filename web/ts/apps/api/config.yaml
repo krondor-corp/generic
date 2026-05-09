@@ -1,0 +1,13 @@
+# TypeScript API configuration
+# This references the same Vault configuration as the Python project
+
+# Application name
+app_name: generic-api
+
+# Development server configuration
+dev_server:
+  port: 3001
+  debug: true
+
+# Note: Vault configuration is shared with Python project
+# See ../../py/config.yaml for Vault settings

@@ -1,0 +1,10 @@
+# Ignore build output
+build/
+dist/
+.next/
+
+# Ignore node_modules
+node_modules/
+
+**/generated/**
+**/.terraform/**

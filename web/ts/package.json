@@ -1,0 +1,21 @@
+{
+  "name": "repo",
+  "engines": {
+    "node": "20.x"
+  },
+  "packageManager": "pnpm@9.15.9",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "fmt": "turbo run fmt",
+    "fmt:check": "turbo run fmt:check",
+    "check-types": "turbo run check-types",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.4.4"
+  }
+}

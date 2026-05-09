@@ -1,0 +1,48 @@
+{
+  "name": "@repo/http-api",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/es/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/es/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/es/index.d.ts",
+        "default": "./dist/es/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "bunchee src/index.ts",
+    "dev": "bunchee src/index.ts --watch",
+    "fmt": "prettier --write \"src/**/*.ts\" --config ../../.prettierrc",
+    "fmt:check": "prettier --check \"src/**/*.ts\" --config ../../.prettierrc",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@quotientjs/error": "^0.1.0",
+    "uuid": "^11.0.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.9",
+    "bunchee": "^6.4.0",
+    "eslint": "^9.22.0",
+    "typescript": "5.8.2"
+  },
+  "peerDependencies": {
+    "express": "^4.21.2"
+  }
+}

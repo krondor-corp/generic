@@ -15,8 +15,8 @@ registry:
     - DOCKER_HUB_TOKEN
 
 builder:
-  dockerfile: rust/Dockerfile
-  context: .
+  dockerfile: web/rust/Dockerfile
+  context: web
   arch: amd64
   cache:
     type: registry
