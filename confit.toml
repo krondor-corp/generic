@@ -12,9 +12,12 @@ admin_email = "alex@getquotient.ai"
 tfc_org = "krondor-generic-org"
 dns_root_zone = "example.com"
 
+[vars]
+stage = "production"
+
 [vaults]
 cloud = "cloud-providers"
-app = "krondor-generic-production"
+app = "krondor-generic-{vars.stage}"
 
 [credentials.server]
 ip = "tf://server_ip"
