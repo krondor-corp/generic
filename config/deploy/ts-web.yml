@@ -1,6 +1,6 @@
-service: <%= `confit resolve project.name`.strip %>-ts
+service: <%= `confit resolve project.name`.strip %>-ts-web
 deploy_timeout: 180
-image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-ts
+image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-ts-web
 
 servers:
   web:
@@ -23,8 +23,8 @@ builder:
 
 proxy:
   ssl: true
-  host: <%= `confit resolve services.ts.domain`.strip %>
-  app_port: <%= `confit resolve services.ts.port`.strip %>
+  host: <%= `confit resolve services.ts-web.domain`.strip %>
+  app_port: <%= `confit resolve services.ts-web.port`.strip %>
   healthcheck:
     path: /
 

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       deploy-py: ${{ steps.filter.outputs.py }}
-      deploy-ts: ${{ steps.filter.outputs.ts }}
+      deploy-ts-web: ${{ steps.filter.outputs.ts-web }}
       deploy-rust: ${{ steps.filter.outputs.rust }}
     steps:
       - uses: actions/checkout@v4
@@ -25,144 +25,45 @@ jobs:
               - 'config/deploy/py.yml'
               - '.kamal/secrets'
               - '.github/workflows/cd.yml'
-            ts:
+              - '.github/workflows/deploy.yml'
+            ts-web:
               - 'web/ts/**'
               - 'bin/kamal'
-              - 'config/deploy/ts.yml'
+              - 'config/deploy/ts-web.yml'
               - '.kamal/secrets'
               - '.github/workflows/cd.yml'
+              - '.github/workflows/deploy.yml'
             rust:
               - 'web/rust/**'
               - 'bin/kamal'
               - 'config/deploy/rust.yml'
               - '.kamal/secrets'
               - '.github/workflows/cd.yml'
+              - '.github/workflows/deploy.yml'
 
   deploy-py:
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy-py == 'true'
-    runs-on: ubuntu-latest
-    environment: production
-    env:
-      DOCKER_BUILDKIT: 1
+    uses: ./.github/workflows/deploy.yml
+    with:
+      service: py
+    secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      CI: true
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-
-      - name: Install Kamal
-        run: gem install kamal
-
-      - name: Install 1Password CLI
-        uses: 1password/install-cli-action@v1
-
-      - name: Install confit
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/krondor-corp/confit/main/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_wrapper: false
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Initialize Terraform
-        run: |
-          export TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token)
-          terraform -chdir=iac/stages/production init -input=false
-
-      - name: Deploy
-        run: ./bin/kamal py deploy
-
-  deploy-ts:
+  deploy-ts-web:
     needs: detect-changes
-    if: needs.detect-changes.outputs.deploy-ts == 'true'
-    runs-on: ubuntu-latest
-    environment: production
-    env:
-      DOCKER_BUILDKIT: 1
+    if: needs.detect-changes.outputs.deploy-ts-web == 'true'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      service: ts-web
+    secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      CI: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-
-      - name: Install Kamal
-        run: gem install kamal
-
-      - name: Install 1Password CLI
-        uses: 1password/install-cli-action@v1
-
-      - name: Install confit
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/krondor-corp/confit/main/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_wrapper: false
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Initialize Terraform
-        run: |
-          export TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token)
-          terraform -chdir=iac/stages/production init -input=false
-
-      - name: Deploy
-        run: ./bin/kamal ts deploy
 
   deploy-rust:
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy-rust == 'true'
-    runs-on: ubuntu-latest
-    environment: production
-    env:
-      DOCKER_BUILDKIT: 1
+    uses: ./.github/workflows/deploy.yml
+    with:
+      service: rust
+    secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      CI: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-
-      - name: Install Kamal
-        run: gem install kamal
-
-      - name: Install 1Password CLI
-        uses: 1password/install-cli-action@v1
-
-      - name: Install confit
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/krondor-corp/confit/main/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_wrapper: false
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Initialize Terraform
-        run: |
-          export TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token)
-          terraform -chdir=iac/stages/production init -input=false
-
-      - name: Deploy
-        run: ./bin/kamal rust deploy
