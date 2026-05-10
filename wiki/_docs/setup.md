@@ -63,3 +63,29 @@ The template expects two 1Password vaults:
 - **app** — application secrets (OAuth credentials, API keys)
 
 Create the required items in each vault. See [confit]({{ '/docs/confit/' | relative_url }}) for the full list of referenced paths.
+
+## GitHub Actions
+
+Two workflows run on push to `main`:
+
+- **CD** (`cd.yml`) — deploys services when their source or config changes. Can also be triggered manually from the Actions tab with a service selector.
+- **Pages** (`pages.yml`) — builds and deploys the wiki to GitHub Pages when `wiki/` changes.
+
+### Repository secrets
+
+Add the following secret in **Settings → Secrets and variables → Actions**:
+
+| Secret | Purpose |
+|--------|---------|
+| `OP_SERVICE_ACCOUNT_TOKEN` | 1Password service account token — used by CI to resolve secrets via `confit` |
+
+To create a service account: go to **1Password → Developer → Service Accounts**, create one with read access to both your `cloud` and `app` vaults, and copy the token.
+
+### GitHub Pages
+
+Enable Pages in **Settings → Pages**:
+
+1. Set **Source** to **GitHub Actions**
+2. The `pages.yml` workflow handles the rest — no branch or folder config needed
+
+After enabling, the wiki will deploy automatically on the next push to `wiki/`.

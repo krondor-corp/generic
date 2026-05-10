@@ -4,10 +4,23 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy (py, ts-web, rust, or all)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - py
+          - ts-web
+          - rust
 
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     outputs:
       deploy-py: ${{ steps.filter.outputs.py }}
       deploy-ts-web: ${{ steps.filter.outputs.ts-web }}
@@ -43,7 +56,11 @@ jobs:
 
   deploy-py:
     needs: detect-changes
-    if: needs.detect-changes.outputs.deploy-py == 'true'
+    if: |
+      always() && (
+        (github.event_name == 'push' && needs.detect-changes.outputs.deploy-py == 'true') ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'all' || inputs.service == 'py'))
+      )
     uses: ./.github/workflows/deploy.yml
     with:
       service: py
@@ -52,7 +69,11 @@ jobs:
 
   deploy-ts-web:
     needs: detect-changes
-    if: needs.detect-changes.outputs.deploy-ts-web == 'true'
+    if: |
+      always() && (
+        (github.event_name == 'push' && needs.detect-changes.outputs.deploy-ts-web == 'true') ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'all' || inputs.service == 'ts-web'))
+      )
     uses: ./.github/workflows/deploy.yml
     with:
       service: ts-web
@@ -61,7 +82,11 @@ jobs:
 
   deploy-rust:
     needs: detect-changes
-    if: needs.detect-changes.outputs.deploy-rust == 'true'
+    if: |
+      always() && (
+        (github.event_name == 'push' && needs.detect-changes.outputs.deploy-rust == 'true') ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'all' || inputs.service == 'rust'))
+      )
     uses: ./.github/workflows/deploy.yml
     with:
       service: rust
