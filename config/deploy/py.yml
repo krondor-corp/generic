@@ -1,6 +1,6 @@
 service: <%= `confit resolve project.name`.strip %>-py
 deploy_timeout: 180
-image: <%= `confit resolve services.py.repo`.strip %>-py
+image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-py
 
 servers:
   web:
@@ -10,7 +10,7 @@ ssh:
   user: kamal
 
 registry:
-  username: <%= `confit resolve services.py.repo`.strip.split('/').first %>
+  username: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>
   password:
     - DOCKER_HUB_TOKEN
 
@@ -42,7 +42,8 @@ env:
 accessories:
   postgres:
     image: postgres:17-alpine
-    port: 5432
+    host: <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+    port: "5432:5432"
     env:
       clear:
         POSTGRES_USER: postgres
@@ -52,6 +53,7 @@ accessories:
       - postgres-data:/var/lib/postgresql/data
   redis:
     image: redis:7-alpine
-    port: 6379
+    host: <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+    port: "6379:6379"
     directories:
       - redis-data:/data

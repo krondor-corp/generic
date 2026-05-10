@@ -1,5 +1,0 @@
-[spawn]
-auto = true
-
-[agent]
-type = "claude"

@@ -1,6 +1,6 @@
 service: <%= `confit resolve project.name`.strip %>-rust
 deploy_timeout: 180
-image: <%= `confit resolve services.rust.repo`.strip %>-rust
+image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-rust
 
 servers:
   web:
@@ -10,7 +10,7 @@ ssh:
   user: kamal
 
 registry:
-  username: <%= `confit resolve services.rust.repo`.strip.split('/').first %>
+  username: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>
   password:
     - DOCKER_HUB_TOKEN
 

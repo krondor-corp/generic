@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — generic</title>
+<meta name="description" content="A batteries-included template for deploying web services with Terraform, Ansible, Kamal, and confit.">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code || pre).textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="site-title">
+      <img src="/assets/images/favicon.svg" alt="" width="24" height="24" class="site-logo">
+      <span class="site-title-text">GENERIC</span>
+    </a>
+    <div class="site-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/docs/overview/" class="site-nav-link">Docs &rarr;</a>
+    </div>
+  </div>
+</header>
+
+  <main class="docs-layout">
+    <details class="sidebar-mobile">
+      <summary>Navigation</summary>
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </details>
+    <div class="sidebar-desktop">
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </div>
+    <div class="docs-content">
+      <article>
+        <h1>Overview</h1>
+        <p>The Rust service lives at <code class="language-plaintext highlighter-rouge">web/rust/</code> and is deployed via Kamal with the config at <code class="language-plaintext highlighter-rouge">config/deploy/rust.yml</code>.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>The Rust stack is for lightweight, self-contained apps that don’t need a separate frontend build or JavaScript framework. It compiles to a single binary with zero runtime dependencies. Pages are server-rendered with Askama templates and enhanced with HTMX for interactivity and SSE for real-time updates.</p>
+
+<h2 id="stack">Stack</h2>
+
+<ul>
+  <li><strong>Framework:</strong> Axum</li>
+  <li><strong>Database:</strong> SQLite (file-based, persistent volume)</li>
+  <li><strong>Templates:</strong> Askama (Jinja2-style, compiled into the binary)</li>
+  <li><strong>Interactivity:</strong> HTMX</li>
+  <li><strong>Background jobs:</strong> Apalis</li>
+  <li><strong>Auth:</strong> Google OAuth with session-based cookies</li>
+  <li><strong>Port:</strong> 3000</li>
+</ul>
+
+<h2 id="local-development">Local development</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/rust
+make <span class="nb">install
+</span>make dev
+</code></pre></div></div>
+
+<h2 id="deployment">Deployment</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make kamal <span class="nv">ARGS</span><span class="o">=</span><span class="s2">"rust deploy"</span>
+</code></pre></div></div>
+
+<p>The Kamal config builds from <code class="language-plaintext highlighter-rouge">web/rust/Dockerfile</code> with the build context set to <code class="language-plaintext highlighter-rouge">web/</code>.</p>
+
+<h2 id="environment-variables">Environment variables</h2>
+
+<p>Defined in <code class="language-plaintext highlighter-rouge">config/deploy/rust.yml</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SQLITE_DATABASE_URL</code></td>
+      <td><code class="language-plaintext highlighter-rouge">sqlite:///data/app.db</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">LISTEN_ADDRESS</code></td>
+      <td><code class="language-plaintext highlighter-rouge">0.0.0.0:3000</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">HOST_NAME</code></td>
+      <td><code class="language-plaintext highlighter-rouge">https://rust.&lt;zone&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">LOG_LEVEL</code></td>
+      <td><code class="language-plaintext highlighter-rouge">info</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Secrets (<code class="language-plaintext highlighter-rouge">GOOGLE_O_AUTH_CLIENT_ID</code>, <code class="language-plaintext highlighter-rouge">GOOGLE_O_AUTH_CLIENT_SECRET</code>) are injected from <code class="language-plaintext highlighter-rouge">.kamal/secrets</code>.</p>
+
+<h2 id="volumes">Volumes</h2>
+
+<p>A persistent volume is mounted at <code class="language-plaintext highlighter-rouge">/data</code> inside the container for the SQLite database:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">/var/lib/kamal-volumes/&lt;name&gt;-rust/data:/data</span>
+</code></pre></div></div>
+
+<h2 id="health-check">Health check</h2>
+
+<p>Kamal checks <code class="language-plaintext highlighter-rouge">/_status/livez</code> for readiness.</p>
+
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-meta">&copy; 2026 Krondor Corp</span>
+    <div class="footer-links">
+      <a href="https://github.com/krondor-corp/generic">GitHub</a>
+      <a href="/docs/overview/">Docs</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

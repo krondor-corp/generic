@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>generic — Full-stack project template</title>
+<meta name="description" content="A batteries-included template for deploying web services with Terraform, Ansible, Kamal, and confit.">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code || pre).textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="site-title">
+      <img src="/assets/images/favicon.svg" alt="" width="24" height="24" class="site-logo">
+      <span class="site-title-text">GENERIC</span>
+    </a>
+    <div class="site-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/docs/overview/" class="site-nav-link">Docs &rarr;</a>
+    </div>
+  </div>
+</header>
+
+  <main class="home">
+
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-eyebrow">Full-stack project template</span>
+        <h1 class="hero-title">generic</h1>
+        <p class="hero-tagline">A batteries-included monorepo for deploying web services to a single server. Terraform for infra, Ansible for provisioning, Kamal for zero-downtime deploys, confit for config.</p>
+        <div class="hero-install" id="hero-install">
+          <code>gh repo create my-project --template krondor-corp/generic</code>
+          <button class="copy-btn copy-btn-visible" onclick="navigator.clipboard.writeText('gh repo create my-project --template krondor-corp/generic').then(function(){var b=document.querySelector('#hero-install .copy-btn');b.textContent='copied';setTimeout(function(){b.textContent='copy'},1500)})">copy</button>
+        </div>
+        <div class="hero-links">
+          <a href="/docs/overview/" class="hero-cta">Get started</a>
+          <a href="https://github.com/krondor-corp/generic" class="hero-link">View on GitHub</a>
+        </div>
+      </div>
+      <div class="hero-logo">
+        <img src="/assets/images/favicon.svg" alt="generic logo">
+      </div>
+    </section>
+
+<section class="features">
+      <h2 class="section-heading">What's included</h2>
+      <p class="section-description">Everything you need to go from an empty repo to a production deployment on a single DigitalOcean droplet.</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Provision</h3>
+          <p>Terraform creates a DigitalOcean droplet, generates SSH keys, and configures DNS records via Cloudflare. State is stored in Terraform Cloud so your infra is versioned and auditable.</p>
+        </div>
+        <div class="feature">
+          <h3>Configure</h3>
+          <p>Ansible bootstraps the server with users, SSH hardening, Docker, and a firewall. One command, fully idempotent, tag-selective. Run it once or run it every time &mdash; same result.</p>
+        </div>
+        <div class="feature">
+          <h3>Deploy</h3>
+          <p>Kamal builds Docker containers from source and deploys with zero-downtime rolling updates behind Traefik. Automatic SSL via Let's Encrypt, no nginx config to manage.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="commands-preview">
+      <h2 class="section-heading">Workflow</h2>
+      <p class="section-description">From first clone to production in four commands.</p>
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <span class="step-cmd">make infra</span>
+          <div>
+            <strong>Create infrastructure</strong>
+            <p>Runs <code>terraform apply</code> to provision the droplet, DNS, and SSH keys.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-cmd">make bootstrap</span>
+          <div>
+            <strong>Provision the server</strong>
+            <p>Runs the Ansible playbook to install packages, create users, and harden SSH.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-cmd">make kamal</span>
+          <div>
+            <strong>Deploy services</strong>
+            <p>Builds containers and pushes them with zero-downtime rolling deploys via Kamal.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-cmd">make ssh</span>
+          <div>
+            <strong>Connect to the server</strong>
+            <p>SSH into the droplet using the Terraform-generated key. Debug, tail logs, run one-off commands.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2 class="section-heading">Service stacks</h2>
+      <p class="section-description">Each stack lives under <code>web/</code> with its own Makefile, Dockerfile, and dev tooling. Mix and match or use one.</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>TypeScript</h3>
+          <p>React frontend with a Node.js API. pnpm for package management, turbo for monorepo builds. Vite dev server with HMR.</p>
+          <a href="https://ts.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+        <div class="feature">
+          <h3>Python</h3>
+          <p>FastAPI backend with TaskIQ workers, Redis queues, and pydantic-ai for structured AI interactions. Includes admin dashboard and SSE streaming.</p>
+          <a href="https://py.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+        <div class="feature">
+          <h3>Rust</h3>
+          <p>Axum web server with Askama templates, SQLite, and HTMX. Single binary deployment with zero runtime dependencies.</p>
+          <a href="https://rust.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-bottom">
+      <p>Built and maintained by <a href="https://github.com/krondor-corp">Krondor Corp</a>. This template is opinionated &mdash; it's for small teams that want to ship to a single server and understand every piece of their stack. If you need multi-region, Kubernetes, or managed services, you've outgrown this. That's a good problem to have.</p>
+    </section>
+
+  </main>
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-meta">&copy; 2026 Krondor Corp</span>
+    <div class="footer-links">
+      <a href="https://github.com/krondor-corp/generic">GitHub</a>
+      <a href="/docs/overview/">Docs</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

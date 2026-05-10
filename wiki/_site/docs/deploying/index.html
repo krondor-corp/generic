@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deploying — generic</title>
+<meta name="description" content="A batteries-included template for deploying web services with Terraform, Ansible, Kamal, and confit.">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code || pre).textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="site-title">
+      <img src="/assets/images/favicon.svg" alt="" width="24" height="24" class="site-logo">
+      <span class="site-title-text">GENERIC</span>
+    </a>
+    <div class="site-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/docs/overview/" class="site-nav-link">Docs &rarr;</a>
+    </div>
+  </div>
+</header>
+
+  <main class="docs-layout">
+    <details class="sidebar-mobile">
+      <summary>Navigation</summary>
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </details>
+    <div class="sidebar-desktop">
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </div>
+    <div class="docs-content">
+      <article>
+        <h1>Deploying</h1>
+        <p>Services are deployed with <a href="https://kamal-deploy.org/">Kamal</a>, which builds Docker containers and rolls them out behind a Traefik reverse proxy with automatic SSL.</p>
+
+<h2 id="deploy-a-service">Deploy a service</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bin/kamal py deploy
+<span class="c"># or</span>
+make kamal <span class="nv">ARGS</span><span class="o">=</span><span class="s2">"py deploy"</span>
+</code></pre></div></div>
+
+<p>First-time setup for a new service:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bin/kamal py setup
+bin/kamal py deploy
+</code></pre></div></div>
+
+<h2 id="how-it-works">How it works</h2>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">bin/kamal</code> wraps itself in <code class="language-plaintext highlighter-rouge">confit ssh</code> to load the Terraform-generated deploy key</li>
+  <li>Kamal reads the service config from <code class="language-plaintext highlighter-rouge">config/deploy/&lt;service&gt;.yml</code></li>
+  <li>Secrets are injected from <code class="language-plaintext highlighter-rouge">.kamal/secrets</code>, which calls <code class="language-plaintext highlighter-rouge">confit resolve --reveal</code></li>
+  <li>Kamal builds the Docker image (context: <code class="language-plaintext highlighter-rouge">web/</code>, dockerfile: <code class="language-plaintext highlighter-rouge">web/&lt;service&gt;/Dockerfile</code>)</li>
+  <li>The image is pushed to Docker Hub and deployed with zero-downtime rolling updates</li>
+</ol>
+
+<h2 id="service-configs">Service configs</h2>
+
+<p>Each service has a Kamal config at <code class="language-plaintext highlighter-rouge">config/deploy/&lt;service&gt;.yml</code>. These are ERB templates that call confit for dynamic values:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">service</span><span class="pi">:</span> <span class="s">&lt;%%= `confit resolve project.name`.strip %&gt;-py</span>
+<span class="na">image</span><span class="pi">:</span> <span class="s">&lt;%%= `confit resolve services.py.repo`.strip %&gt;-py</span>
+
+<span class="na">servers</span><span class="pi">:</span>
+  <span class="na">web</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">&lt;%%= `confit --set stage=production resolve credentials.server.ip`.strip %&gt;</span>
+
+<span class="na">proxy</span><span class="pi">:</span>
+  <span class="na">ssl</span><span class="pi">:</span> <span class="kc">true</span>
+  <span class="na">host</span><span class="pi">:</span> <span class="s">&lt;%%= `confit resolve services.py.domain`.strip %&gt;</span>
+  <span class="na">app_port</span><span class="pi">:</span> <span class="s">&lt;%%= `confit resolve services.py.port`.strip %&gt;</span>
+</code></pre></div></div>
+
+<p>Environment variables are defined directly in the Kamal config — not in <code class="language-plaintext highlighter-rouge">confit.toml</code>.</p>
+
+<h2 id="secrets">Secrets</h2>
+
+<p><code class="language-plaintext highlighter-rouge">.kamal/secrets</code> resolves secrets via confit and exports them for Kamal:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">DOCKER_HUB_TOKEN</span><span class="o">=</span><span class="si">$(</span>confit resolve <span class="nt">--reveal</span> credentials.cloud.docker_hub_token<span class="si">)</span>
+</code></pre></div></div>
+
+<p>Reference these in the Kamal config under <code class="language-plaintext highlighter-rouge">env.secret</code>.</p>
+
+<h2 id="adding-a-new-service">Adding a new service</h2>
+
+<ol>
+  <li>Add the service source under <code class="language-plaintext highlighter-rouge">web/&lt;name&gt;/</code> with a <code class="language-plaintext highlighter-rouge">Dockerfile</code></li>
+  <li>Add a <code class="language-plaintext highlighter-rouge">[services.&lt;name&gt;]</code> entry in <code class="language-plaintext highlighter-rouge">confit.toml</code> with <code class="language-plaintext highlighter-rouge">repo</code>, <code class="language-plaintext highlighter-rouge">domain</code>, and <code class="language-plaintext highlighter-rouge">port</code></li>
+  <li>Create <code class="language-plaintext highlighter-rouge">config/deploy/&lt;name&gt;.yml</code> using an existing config as a template</li>
+  <li>Run <code class="language-plaintext highlighter-rouge">make infra ARGS="apply"</code> to create the DNS record (the subdomain is picked up automatically from <code class="language-plaintext highlighter-rouge">services.&lt;name&gt;.domain</code>)</li>
+  <li>Deploy: <code class="language-plaintext highlighter-rouge">bin/kamal &lt;name&gt; setup &amp;&amp; bin/kamal &lt;name&gt; deploy</code></li>
+</ol>
+
+<h2 id="available-services">Available services</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Domain</th>
+      <th>Port</th>
+      <th>Stack</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>py</td>
+      <td><code class="language-plaintext highlighter-rouge">py.&lt;zone&gt;</code></td>
+      <td>8000</td>
+      <td>Python (FastAPI)</td>
+    </tr>
+    <tr>
+      <td>rust</td>
+      <td><code class="language-plaintext highlighter-rouge">rust.&lt;zone&gt;</code></td>
+      <td>3000</td>
+      <td>Rust (Axum)</td>
+    </tr>
+    <tr>
+      <td>ts-web</td>
+      <td><code class="language-plaintext highlighter-rouge">ts.&lt;zone&gt;</code></td>
+      <td>3000</td>
+      <td>TypeScript (Next.js)</td>
+    </tr>
+  </tbody>
+</table>
+
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-meta">&copy; 2026 Krondor Corp</span>
+    <div class="footer-links">
+      <a href="https://github.com/krondor-corp/generic">GitHub</a>
+      <a href="/docs/overview/">Docs</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

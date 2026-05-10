@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_NAME="$(confit resolve project.name)"
+PORT="$(confit resolve accessories.postgres.port)"
+DB_NAME="$(confit resolve worktree.db_name)"
+
+CONTAINER_NAME="${PROJECT_NAME}-postgres"
+VOLUME_NAME="${PROJECT_NAME}-postgres-data"
+IMAGE="$(confit resolve accessories.postgres.image)"
+
+RUNTIME="$(confit resolve runtime.container 2>/dev/null || echo docker)"
+
+up() {
+    if $RUNTIME ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        confit log --ok "Postgres container is already running."
+        return 0
+    fi
+
+    if $RUNTIME ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        confit log "Starting existing Postgres container..."
+        $RUNTIME start "$CONTAINER_NAME"
+    else
+        confit log "Creating Postgres container..."
+        $RUNTIME volume create "$VOLUME_NAME" 2>/dev/null || true
+        $RUNTIME run \
+            --name "$CONTAINER_NAME" \
+            --publish "${PORT}:5432" \
+            --volume "${VOLUME_NAME}:/var/lib/postgresql/data" \
+            --env POSTGRES_USER=postgres \
+            --env POSTGRES_PASSWORD=postgres \
+            --env POSTGRES_DB=postgres \
+            --env POSTGRES_HOST_AUTH_METHOD=trust \
+            --health-cmd="pg_isready -U postgres" \
+            --health-interval=5s \
+            --health-timeout=5s \
+            --health-retries=5 \
+            --detach \
+            "$IMAGE"
+    fi
+
+    confit log "Waiting for Postgres to be ready..."
+    for i in $(seq 1 30); do
+        if $RUNTIME exec "$CONTAINER_NAME" pg_isready -U postgres &>/dev/null; then
+            confit log --ok "Postgres is ready on port $PORT"
+            return 0
+        fi
+        sleep 1
+    done
+    confit log --err "Postgres did not become ready in time"
+    exit 1
+}
+
+down() {
+    confit log "Stopping Postgres..."
+    $RUNTIME stop "$CONTAINER_NAME" 2>/dev/null || true
+    $RUNTIME rm -f "$CONTAINER_NAME" 2>/dev/null || true
+    $RUNTIME volume rm -f "$VOLUME_NAME" 2>/dev/null || true
+    confit log --ok "Postgres cleaned up"
+}
+
+endpoint() {
+    echo "postgresql://postgres:postgres@localhost:${PORT}/${DB_NAME}"
+}
+
+connect() {
+    if ! command -v psql &>/dev/null; then
+        confit log --err "psql is not installed (brew install postgresql)"
+        exit 1
+    fi
+    PGPASSWORD=postgres psql -h localhost -p "$PORT" -U postgres -d "$DB_NAME"
+}
+
+ensure_database() {
+    local db="${1:-$DB_NAME}"
+    if ! PGPASSWORD=postgres psql -h localhost -p "$PORT" -U postgres -lqt 2>/dev/null | cut -d \| -f 1 | grep -qw "$db"; then
+        PGPASSWORD=postgres psql -h localhost -p "$PORT" -U postgres -c "CREATE DATABASE \"$db\";"
+        confit log --ok "Database '$db' created"
+    else
+        confit log --ok "Database '$db' already exists"
+    fi
+}
+
+wipe() {
+    local db="${1:-$DB_NAME}"
+    PGPASSWORD=postgres psql -h localhost -p "$PORT" -U postgres \
+        -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$db' AND pid <> pg_backend_pid();" 2>/dev/null || true
+    PGPASSWORD=postgres psql -h localhost -p "$PORT" -U postgres \
+        -c "DROP DATABASE IF EXISTS \"$db\";"
+    confit log --ok "Database '$db' dropped"
+}
+
+status() {
+    if $RUNTIME ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        confit log --ok "Postgres is running"
+        if command -v pg_isready &>/dev/null; then
+            pg_isready -h localhost -p "$PORT" -U postgres
+        fi
+    else
+        confit log --err "Postgres is not running"
+    fi
+}
+
+help() {
+    echo "Usage: $0 <command>"
+    echo ""
+    echo "Commands:"
+    echo "  up                Start Postgres container"
+    echo "  down              Stop and remove container + volume"
+    echo "  endpoint          Print DATABASE_URL for current branch"
+    echo "  connect           Open psql shell"
+    echo "  ensure_database   Create branch database if needed"
+    echo "  wipe [db]         Drop a database"
+    echo "  status            Check container status"
+}
+
+CMD=${1:-help}
+shift || true
+$CMD "$@"

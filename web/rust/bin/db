@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/bin/config"
+
+RUST_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DATA_DIR="$RUST_ROOT/data"
+MIGRATIONS_DIR="$RUST_ROOT/crates/app/migrations"
+SEED_DIR="$RUST_ROOT/crates/app/seed"
+
+db_path() { echo "$DATA_DIR/app.db"; }
+db_url()  { echo "sqlite://$(db_path)"; }
+
+setup() {
+    mkdir -p "$DATA_DIR"
+    confit log "Running seed (triggers migrations on connect)..."
+    SQLITE_DATABASE_URL="$(db_url)" SEED_DIR="$SEED_DIR" \
+        cargo run --bin seed --manifest-path "$RUST_ROOT/Cargo.toml" -- all
+    confit log --ok "Setup complete: $(db_path)"
+}
+
+migrate() {
+    local name="${1:?migration name required — usage: $0 migrate <name>}"
+    local ts
+    ts=$(date -u +%Y%m%d%H%M%S)
+    local filename="${ts}_${name}.up.sql"
+    touch "$MIGRATIONS_DIR/$filename"
+    confit log --ok "Created: $MIGRATIONS_DIR/$filename"
+}
+
+seed() {
+    mkdir -p "$DATA_DIR"
+    SQLITE_DATABASE_URL="$(db_url)" SEED_DIR="$SEED_DIR" \
+        cargo run --bin seed --manifest-path "$RUST_ROOT/Cargo.toml" -- all
+    confit log --ok "Seeding complete"
+}
+
+reset() {
+    local path
+    path="$(db_path)"
+    confit log "Resetting database: $path"
+    rm -f "$path" "$path-shm" "$path-wal"
+    setup
+}
+
+clean() {
+    local path
+    path="$(db_path)"
+    rm -f "$path" "$path-shm" "$path-wal"
+    confit log --ok "Cleaned: $path"
+}
+
+query() {
+    local sql="${1:?SQL query required — usage: $0 query \"SQL\" [-t]}"
+    local path
+    path="$(db_path)"
+    if [[ ! -f "$path" ]]; then
+        confit log --err "Database does not exist: $path"
+        exit 1
+    fi
+    if [[ "${TAB_OUTPUT:-}" == "true" ]]; then
+        sqlite3 -separator $'\t' "$path" "$sql"
+    else
+        sqlite3 -header -column "$path" "$sql"
+    fi
+}
+
+info() {
+    local path
+    path="$(db_path)"
+    echo "Branch:   $(get_branch_name)"
+    echo "Database: $path"
+    echo "URL:      $(db_url)"
+    if [[ -f "$path" ]]; then
+        echo "Size:     $(du -h "$path" | cut -f1)"
+        echo ""
+        echo "Tables:"
+        sqlite3 "$path" ".tables"
+    else
+        confit log "Database does not exist yet. Run: $0 setup"
+    fi
+}
+
+nuke() {
+    confit log "Deleting ALL databases in $DATA_DIR"
+    rm -f "$DATA_DIR"/*.db "$DATA_DIR"/*.db-shm "$DATA_DIR"/*.db-wal
+    confit log --ok "All databases nuked"
+}
+
+help() {
+    echo "Usage: $0 <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  setup          Create data dir, run migrations + seed"
+    echo "  reset          Delete DB, recreate, migrate, seed"
+    echo "  migrate <name> Create a new migration file"
+    echo "  seed           Seed the database"
+    echo "  clean          Delete the database file"
+    echo "  query \"SQL\"    Run a SQL query (TAB_OUTPUT=true for tsv)"
+    echo "  info           Show database path, branch, tables"
+    echo "  nuke           Delete ALL databases in data/"
+}
+
+CMD=${1:-help}
+shift || true
+
+case "$CMD" in
+setup|reset|migrate|seed|clean|query|info|nuke|help)
+    $CMD "$@"
+    ;;
+*)
+    confit log --err "Unknown command: $CMD"
+    help
+    exit 1
+    ;;
+esac

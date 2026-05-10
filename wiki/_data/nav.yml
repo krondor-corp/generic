@@ -1,0 +1,37 @@
+- title: Getting Started
+  items:
+    - overview
+    - setup
+    - quickstart
+
+- title: Infrastructure
+  items:
+    - terraform
+    - ansible
+    - confit
+
+- title: Deploying
+  items:
+    - deploying
+
+- title: Python
+  items:
+    - py
+    - py-background-jobs
+    - py-database
+    - py-storage
+    - py-ai
+
+- title: Rust
+  items:
+    - rust
+    - rust-background-jobs
+
+- title: TypeScript
+  items:
+    - ts-web
+
+- title: Development
+  items:
+    - local-dev
+    - hybrid-stack

@@ -9,6 +9,7 @@ resource "digitalocean_droplet" "main" {
   tags = concat(var.tags, ["managed-by-terraform"])
 
   monitoring        = true
+  droplet_agent     = true
   graceful_shutdown = false
 }
 

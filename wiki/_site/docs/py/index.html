@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — generic</title>
+<meta name="description" content="A batteries-included template for deploying web services with Terraform, Ansible, Kamal, and confit.">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code || pre).textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="site-title">
+      <img src="/assets/images/favicon.svg" alt="" width="24" height="24" class="site-logo">
+      <span class="site-title-text">GENERIC</span>
+    </a>
+    <div class="site-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/docs/overview/" class="site-nav-link">Docs &rarr;</a>
+    </div>
+  </div>
+</header>
+
+  <main class="docs-layout">
+    <details class="sidebar-mobile">
+      <summary>Navigation</summary>
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </details>
+    <div class="sidebar-desktop">
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </div>
+    <div class="docs-content">
+      <article>
+        <h1>Overview</h1>
+        <p>The Python stack is the best starting point for most apps. If you need a database, background jobs, user auth, AI chat, or an admin dashboard, start here. It ships a working FastAPI app with PostgreSQL, Redis, TaskIQ workers, pydantic-ai agents, and SSE streaming out of the box.</p>
+
+<p>The service lives at <code class="language-plaintext highlighter-rouge">web/py/</code> and is deployed via Kamal with the config at <code class="language-plaintext highlighter-rouge">config/deploy/py.yml</code>.</p>
+
+<h2 id="stack">Stack</h2>
+
+<ul>
+  <li><strong>Framework:</strong> FastAPI (async)</li>
+  <li><strong>Database:</strong> PostgreSQL 17 (deployed as a Kamal accessory)</li>
+  <li><strong>Cache / Broker:</strong> Redis 7 (deployed as a Kamal accessory)</li>
+  <li><strong>Background Jobs:</strong> TaskIQ with Redis broker</li>
+  <li><strong>Migrations:</strong> Alembic (auto-generated from SQLAlchemy models)</li>
+  <li><strong>Port:</strong> 8000</li>
+</ul>
+
+<h2 id="architecture-overview">Architecture overview</h2>
+
+<p>The codebase follows a <strong>functional-first</strong> pattern. Database models are plain data containers; business logic lives in pure async functions with <code class="language-plaintext highlighter-rouge">(params, ctx) -&gt; result</code> signatures. A <code class="language-plaintext highlighter-rouge">Context</code> dataclass handles dependency injection (database session, logger, storage client).</p>
+
+<ul>
+  <li><a href="/docs/py-background-jobs/">Background Jobs</a> — TaskIQ workers with Redis, cron scheduling, distributed locking</li>
+  <li><a href="/docs/py-database/">Database</a> — PostgreSQL, Alembic migrations, soft deletes, multi-branch dev</li>
+  <li><a href="/docs/py-ai/">AI &amp; Chat</a> — pydantic-ai agents, streaming SSE, tool use, async tool execution</li>
+</ul>
+
+<h2 id="local-development">Local development</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/py
+make <span class="nb">install
+</span>make setup      <span class="c"># starts postgres + redis containers, runs migrations</span>
+make dev
+</code></pre></div></div>
+
+<h2 id="deployment">Deployment</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make kamal <span class="nv">ARGS</span><span class="o">=</span><span class="s2">"py deploy"</span>
+</code></pre></div></div>
+
+<p>The Kamal config builds from <code class="language-plaintext highlighter-rouge">web/py/Dockerfile</code> with the build context set to <code class="language-plaintext highlighter-rouge">web/</code>.</p>
+
+<h2 id="environment-variables">Environment variables</h2>
+
+<p>Defined in <code class="language-plaintext highlighter-rouge">config/deploy/py.yml</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">POSTGRES_URL</code></td>
+      <td><code class="language-plaintext highlighter-rouge">postgresql://postgres:postgres@&lt;name&gt;-py-postgres:5432/postgres</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">REDIS_URL</code></td>
+      <td><code class="language-plaintext highlighter-rouge">redis://&lt;name&gt;-py-redis:6379</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">HOST_NAME</code></td>
+      <td><code class="language-plaintext highlighter-rouge">https://py.&lt;zone&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">DEBUG</code></td>
+      <td><code class="language-plaintext highlighter-rouge">false</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Secrets (<code class="language-plaintext highlighter-rouge">GOOGLE_O_AUTH_CLIENT_ID</code>, <code class="language-plaintext highlighter-rouge">GOOGLE_O_AUTH_CLIENT_SECRET</code>, <code class="language-plaintext highlighter-rouge">ANTHROPIC_API_KEY</code>) are injected from <code class="language-plaintext highlighter-rouge">.kamal/secrets</code>.</p>
+
+<h2 id="accessories">Accessories</h2>
+
+<p>The Kamal config provisions two accessories alongside the app:</p>
+
+<ul>
+  <li><strong>postgres</strong> – PostgreSQL 17 Alpine with persistent volume</li>
+  <li><strong>redis</strong> – Redis 7 Alpine with persistent volume</li>
+</ul>
+
+<h2 id="health-check">Health check</h2>
+
+<p>Kamal checks <code class="language-plaintext highlighter-rouge">/_status/livez</code> for readiness.</p>
+
+<h2 id="contributing">Contributing</h2>
+
+<h3 id="database">Database</h3>
+
+<p>All database operations go through py-core (<code class="language-plaintext highlighter-rouge">web/py/packages/py-core/</code>). Applications import from py-core rather than accessing the database directly.</p>
+
+<h4 id="local-services">Local services</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># From web/py/packages/py-core/</span>
+make setup              <span class="c"># Start postgres + redis, run migrations</span>
+make db-up              <span class="c"># Start PostgreSQL container only</span>
+make db-down            <span class="c"># Stop and remove container</span>
+make db-status          <span class="c"># Check container status</span>
+make db-endpoint        <span class="c"># Print connection URL</span>
+make wipe               <span class="c"># Drop branch-specific database (keeps container)</span>
+</code></pre></div></div>
+
+<p>When working with git worktrees, each branch gets its own database (e.g., <code class="language-plaintext highlighter-rouge">krondor-generic_my_feature</code>). The <code class="language-plaintext highlighter-rouge">wipe</code> command only drops the database for your current branch.</p>
+
+<h4 id="migrations">Migrations</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># From web/py/packages/py-core/</span>
+
+<span class="c"># Run pending migrations</span>
+make db-migrate
+
+<span class="c"># Auto-generate from model changes</span>
+make db-prepare <span class="nv">MSG</span><span class="o">=</span><span class="s2">"add user preferences table"</span>
+
+<span class="c"># Manual migration (data migrations, complex changes)</span>
+<span class="nv">MANUAL</span><span class="o">=</span>1 make db-prepare <span class="nv">MSG</span><span class="o">=</span><span class="s2">"migrate legacy data"</span>
+</code></pre></div></div>
+
+<p>Migration files live in <code class="language-plaintext highlighter-rouge">web/py/packages/py-core/alembic/versions/</code>.</p>
+
+<p><strong>Best practices:</strong></p>
+<ul>
+  <li>One logical change per migration</li>
+  <li>Always test <code class="language-plaintext highlighter-rouge">downgrade()</code></li>
+  <li>Review auto-generated migrations before committing</li>
+  <li>Never modify existing migrations once pushed</li>
+</ul>
+
+<h4 id="soft-deletes">Soft deletes</h4>
+
+<p>Never hard delete records. Use soft deletes with an <code class="language-plaintext highlighter-rouge">archived_at</code> timestamp:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">archived_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span> <span class="o">|</span> <span class="bp">None</span><span class="p">]</span> <span class="o">=</span> <span class="nf">mapped_column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Set <code class="language-plaintext highlighter-rouge">archived_at = utcnow()</code> instead of deleting. Filter with <code class="language-plaintext highlighter-rouge">WHERE archived_at IS NULL</code>.</p>
+
+<h4 id="creating-models">Creating models</h4>
+
+<p>Models live in <code class="language-plaintext highlighter-rouge">web/py/packages/py-core/src/py_core/database/models/</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="n">sqlalchemy</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">DateTime</span>
+<span class="kn">from</span> <span class="n">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span>
+<span class="kn">from</span> <span class="n">py_core.database.client</span> <span class="kn">import</span> <span class="n">Base</span>
+<span class="kn">from</span> <span class="n">py_core.database.utils</span> <span class="kn">import</span> <span class="n">utcnow</span><span class="p">,</span> <span class="n">uuid7_str</span>
+
+<span class="k">class</span> <span class="nc">UserPreference</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="sh">"</span><span class="s">user_preferences</span><span class="sh">"</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nf">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">uuid7_str</span><span class="p">)</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nf">mapped_column</span><span class="p">(</span>
+        <span class="n">String</span><span class="p">,</span> <span class="nc">ForeignKey</span><span class="p">(</span><span class="sh">"</span><span class="s">users.id</span><span class="sh">"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="sh">"</span><span class="s">CASCADE</span><span class="sh">"</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span>
+    <span class="p">)</span>
+    <span class="n">theme</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nf">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="sh">"</span><span class="s">light</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="nf">mapped_column</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">utcnow</span><span class="p">)</span>
+    <span class="n">updated_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="nf">mapped_column</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">utcnow</span><span class="p">,</span> <span class="n">onupdate</span><span class="o">=</span><span class="n">utcnow</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>ID strategies:</strong></p>
+<ul>
+  <li>Content-addressed (immutable): <code class="language-plaintext highlighter-rouge">prefix_&lt;blake2b_hash&gt;</code> (e.g., <code class="language-plaintext highlighter-rouge">con_</code>, <code class="language-plaintext highlighter-rouge">seq_</code>)</li>
+  <li>User-mutable: UUID7 via <code class="language-plaintext highlighter-rouge">uuid7_str</code></li>
+</ul>
+
+<p>After creating a model: add it to <code class="language-plaintext highlighter-rouge">database/models/__init__.py</code>, generate a migration with <code class="language-plaintext highlighter-rouge">make db-prepare</code>, review, and apply with <code class="language-plaintext highlighter-rouge">make db-migrate</code>.</p>
+
+<h3 id="cleanup">Cleanup</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Command</th>
+      <th>Effect</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">make clean</code></td>
+      <td>Remove build artifacts (<code class="language-plaintext highlighter-rouge">__pycache__</code>, <code class="language-plaintext highlighter-rouge">.venv</code>)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">make wipe</code></td>
+      <td>Drop branch database (container stays running)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">make teardown</code></td>
+      <td>Remove all containers and volumes</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Reset workflow:</strong> <code class="language-plaintext highlighter-rouge">make wipe &amp;&amp; make setup</code></p>
+
+<p><strong>Full reset:</strong> <code class="language-plaintext highlighter-rouge">make teardown &amp;&amp; make setup</code></p>
+
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-meta">&copy; 2026 Krondor Corp</span>
+    <div class="footer-links">
+      <a href="https://github.com/krondor-corp/generic">GitHub</a>
+      <a href="/docs/overview/">Docs</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Development — generic</title>
+<meta name="description" content="A batteries-included template for deploying web services with Terraform, Ansible, Kamal, and confit.">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code || pre).textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="site-title">
+      <img src="/assets/images/favicon.svg" alt="" width="24" height="24" class="site-logo">
+      <span class="site-title-text">GENERIC</span>
+    </a>
+    <div class="site-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/docs/overview/" class="site-nav-link">Docs &rarr;</a>
+    </div>
+  </div>
+</header>
+
+  <main class="docs-layout">
+    <details class="sidebar-mobile">
+      <summary>Navigation</summary>
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </details>
+    <div class="sidebar-desktop">
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </div>
+    <div class="docs-content">
+      <article>
+        <h1>Local Development</h1>
+        <p>Each service stack under <code class="language-plaintext highlighter-rouge">web/</code> can be developed locally with hot-reload. The Python and Rust stacks rely on containerized infrastructure (PostgreSQL, Redis, SQLite), while the TypeScript stack is self-contained.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>All stacks need:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">confit</code></td>
+      <td>Config resolution and secret injection</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">make</code></td>
+      <td>Uniform task interface across stacks</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pnpm</code></td>
+      <td>Node package management (Python hybrid + TypeScript)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docker</code> / <code class="language-plaintext highlighter-rouge">podman</code></td>
+      <td>Local infrastructure containers</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Stack-specific:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Stack</th>
+      <th>Additional tools</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Python</td>
+      <td><code class="language-plaintext highlighter-rouge">uv</code>, <code class="language-plaintext highlighter-rouge">turbo</code></td>
+    </tr>
+    <tr>
+      <td>Rust</td>
+      <td><code class="language-plaintext highlighter-rouge">cargo</code>, <code class="language-plaintext highlighter-rouge">cargo-watch</code></td>
+    </tr>
+    <tr>
+      <td>TypeScript</td>
+      <td><code class="language-plaintext highlighter-rouge">turbo</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="starting-services">Starting services</h2>
+
+<h3 id="python-fastapi">Python (FastAPI)</h3>
+
+<p>The Python stack needs PostgreSQL and Redis running locally. Infrastructure is managed via helper scripts in <code class="language-plaintext highlighter-rouge">web/bin/</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/py
+
+<span class="c"># Install Python + Node dependencies</span>
+make <span class="nb">install</span>
+
+<span class="c"># Start postgres and redis containers</span>
+make setup
+
+<span class="c"># Run dev server + worker + scheduler via turbo</span>
+make dev
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">make dev</code> runs turbo, which starts three processes in parallel: the FastAPI dev server, the taskiq worker, and the taskiq scheduler. Each uses <code class="language-plaintext highlighter-rouge">web/py/apps/py-app/bin/env.sh</code> to configure environment variables, start the database, and run migrations automatically.</p>
+
+<p>To run only the web server without the worker and scheduler:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make dev-server
+</code></pre></div></div>
+
+<h3 id="rust-axum">Rust (Axum)</h3>
+
+<p>The Rust stack uses SQLite, so no external containers are needed:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/rust
+
+<span class="c"># Fetch dependencies</span>
+make <span class="nb">install</span>
+
+<span class="c"># Run dev server with cargo-watch hot reload</span>
+make dev
+</code></pre></div></div>
+
+<p>The dev server creates its SQLite database at <code class="language-plaintext highlighter-rouge">data/app.db</code> automatically. Reset it with <code class="language-plaintext highlighter-rouge">make db-reset</code>.</p>
+
+<h3 id="typescript-react--express">TypeScript (React + Express)</h3>
+
+<p>The TypeScript stack is fully self-contained:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/ts
+
+<span class="c"># Install pnpm dependencies</span>
+make <span class="nb">install</span>
+
+<span class="c"># Run all apps in dev mode via turbo</span>
+make dev
+</code></pre></div></div>
+
+<p>Turbo starts both the Vite React SPA (<code class="language-plaintext highlighter-rouge">apps/web/</code>) and the Express API (<code class="language-plaintext highlighter-rouge">apps/api/</code>) in parallel with hot module replacement.</p>
+
+<h2 id="environment-variables">Environment variables</h2>
+
+<p>Local dev environment is configured through two mechanisms:</p>
+
+<ol>
+  <li>
+    <p><strong>confit</strong> – the <code class="language-plaintext highlighter-rouge">confit.toml</code> at the repo root defines all credentials and service config. Dev scripts use <code class="language-plaintext highlighter-rouge">confit --set stage=development run --upper credentials.app</code> to inject secrets as environment variables.</p>
+  </li>
+  <li>
+    <p><strong>env.sh scripts</strong> – each app has a <code class="language-plaintext highlighter-rouge">bin/env.sh</code> that sources confit and exports the variables its process needs (<code class="language-plaintext highlighter-rouge">POSTGRES_URL</code>, <code class="language-plaintext highlighter-rouge">REDIS_URL</code>, <code class="language-plaintext highlighter-rouge">HOST_NAME</code>, <code class="language-plaintext highlighter-rouge">LISTEN_PORT</code>, etc.).</p>
+  </li>
+</ol>
+
+<p>The env.sh pattern for the Python stack also handles worktree-aware configuration. When working on a feature branch, <code class="language-plaintext highlighter-rouge">confit resolve worktree.*</code> values adjust the database name and port offset so multiple branches can run simultaneously.</p>
+
+<h2 id="database-management">Database management</h2>
+
+<h3 id="python-postgresql--alembic">Python (PostgreSQL + Alembic)</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/py
+
+<span class="c"># Run pending migrations</span>
+make db-migrate
+
+<span class="c"># Create a new migration</span>
+make db-prepare <span class="nv">MSG</span><span class="o">=</span><span class="s2">"add users table"</span>
+
+<span class="c"># Drop and recreate the database</span>
+make wipe
+make setup
+</code></pre></div></div>
+
+<h3 id="rust-sqlite">Rust (SQLite)</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>web/rust
+
+<span class="c"># Delete the database (migrations run on startup)</span>
+make db-clean
+
+<span class="c"># Full reset</span>
+make db-reset
+</code></pre></div></div>
+
+<h2 id="hot-reload">Hot reload</h2>
+
+<p>Each stack handles hot reload differently:</p>
+
+<ul>
+  <li><strong>Python</strong>: <code class="language-plaintext highlighter-rouge">uvicorn --reload</code> watches Python source files and restarts the server on changes.</li>
+  <li><strong>Rust</strong>: <code class="language-plaintext highlighter-rouge">cargo-watch</code> rebuilds and restarts the binary when Rust sources change.</li>
+  <li><strong>TypeScript</strong>: Vite’s HMR provides instant updates in the browser. The Express API uses its own dev watcher.</li>
+</ul>
+
+<h2 id="makefile-conventions">Makefile conventions</h2>
+
+<p>Every stack exposes the same core set of make targets:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make install     # Install dependencies
+make dev         # Run in development mode with hot reload
+make build       # Build for production
+make test        # Run tests
+make lint        # Run linter
+make fmt         # Format code
+make fmt-check   # Check formatting without modifying
+make types       # Type checking
+make check       # Run all checks (fmt-check + lint + types + test)
+make clean       # Remove build artifacts
+</code></pre></div></div>
+
+<p>This uniformity means you can <code class="language-plaintext highlighter-rouge">cd</code> into any stack and use the same commands without remembering stack-specific tooling.</p>
+
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-meta">&copy; 2026 Krondor Corp</span>
+    <div class="footer-links">
+      <a href="https://github.com/krondor-corp/generic">GitHub</a>
+      <a href="/docs/overview/">Docs</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

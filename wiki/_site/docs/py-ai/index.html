@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI & Chat — generic</title>
+<meta name="description" content="A batteries-included template for deploying web services with Terraform, Ansible, Kamal, and confit.">
+<link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script>
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = (code || pre).textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1500);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="site-title">
+      <img src="/assets/images/favicon.svg" alt="" width="24" height="24" class="site-logo">
+      <span class="site-title-text">GENERIC</span>
+    </a>
+    <div class="site-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="/docs/overview/" class="site-nav-link">Docs &rarr;</a>
+    </div>
+  </div>
+</header>
+
+  <main class="docs-layout">
+    <details class="sidebar-mobile">
+      <summary>Navigation</summary>
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </details>
+    <div class="sidebar-desktop">
+      <nav class="sidebar" aria-label="Documentation navigation">
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Getting Started</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/overview/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/setup/">Setup</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/quickstart/">Quickstart</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Infrastructure</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/terraform/">Terraform</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ansible/">Ansible</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/confit/">Confit</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Deploying</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/deploying/">Deploying</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Python</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-database/">Database</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/py-storage/">Storage</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item active">
+          <a href="/docs/py-ai/">AI & Chat</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Rust</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust/">Overview</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/rust-background-jobs/">Background Jobs</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">TypeScript</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/ts-web/">Overview</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+  <div class="sidebar-group">
+    <h3 class="sidebar-heading">Development</h3>
+    <ul class="sidebar-list">
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/local-dev/">Local Development</a>
+        </li>
+        
+      
+        
+        
+        <li class="sidebar-item">
+          <a href="/docs/hybrid-stack/">Hybrid Stack</a>
+        </li>
+        
+      
+    </ul>
+  </div>
+  
+</nav>
+
+    </div>
+    <div class="docs-content">
+      <article>
+        <h1>AI & Chat</h1>
+        <p>The Python stack includes a full AI chat system built on <a href="https://ai.pydantic.dev/">pydantic-ai</a> with streaming responses, tool use, and async background tool execution.</p>
+
+<h2 id="how-it-works">How it works</h2>
+
+<p>A chat interaction flows through several layers:</p>
+
+<ol>
+  <li><strong>User sends a message</strong> via the admin UI or API</li>
+  <li>A <code class="language-plaintext highlighter-rouge">Thread</code> and <code class="language-plaintext highlighter-rouge">Completion</code> are created in the database</li>
+  <li>A TaskIQ background job picks up the completion</li>
+  <li>The <code class="language-plaintext highlighter-rouge">ChatEngine</code> builds a pydantic-ai agent and streams the response</li>
+  <li>Text chunks are published to Redis and delivered to the client via SSE</li>
+  <li>The LLM can call tools — some run inline, others dispatch to background jobs</li>
+</ol>
+
+<h2 id="agents">Agents</h2>
+
+<p>Agents are defined with the <code class="language-plaintext highlighter-rouge">AgentSpec</code> dataclass:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_my_agent_spec</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AgentSpec</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nc">AgentSpec</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">claude-sonnet-4-5</span><span class="sh">"</span><span class="p">,</span>
+        <span class="n">system_prompt_builder</span><span class="o">=</span><span class="n">build_system_prompt</span><span class="p">,</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_system_stats</span><span class="p">,</span> <span class="n">run_analysis</span><span class="p">],</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<p>The spec declares the model, a system prompt builder (async callable), and a list of tool functions. <code class="language-plaintext highlighter-rouge">build_agent()</code> turns a spec into a pydantic-ai <code class="language-plaintext highlighter-rouge">Agent</code> instance at runtime.</p>
+
+<p>Agent dependencies are injected via <code class="language-plaintext highlighter-rouge">AgentDeps</code>, which carries the database session, a session factory for tools, logger, user ID, thread ID, and completion ID.</p>
+
+<h2 id="tools">Tools</h2>
+
+<p>Tools are async functions decorated with <code class="language-plaintext highlighter-rouge">@tool</code>. The decorator handles exceptions and serializes results.</p>
+
+<p><strong>Sync tools</strong> run inline during the agent loop and return immediately:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@tool</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_system_stats</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">RunContext</span><span class="p">[</span><span class="n">AgentDeps</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ToolResultBase</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">ctx</span><span class="p">.</span><span class="n">deps</span><span class="p">.</span><span class="nf">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="p">.</span><span class="nf">scalar</span><span class="p">(</span><span class="nf">select</span><span class="p">(</span><span class="n">func</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="n">User</span><span class="p">.</span><span class="nb">id</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="nf">completed</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="nc">SystemStatsPayload</span><span class="p">(</span><span class="n">user_count</span><span class="o">=</span><span class="n">count</span><span class="p">),</span>
+        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s"> users in the system</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>Async tools</strong> dispatch a background job and return a <code class="language-plaintext highlighter-rouge">PendingResult</code>. The LLM sees that the tool is running and can continue the conversation. Results are injected into the next completion’s context automatically.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@tool</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">run_analysis</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">RunContext</span><span class="p">[</span><span class="n">AgentDeps</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ToolResultBase</span><span class="p">:</span>
+    <span class="n">execution</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">create_async_tool_execution</span><span class="p">(...)</span>
+    <span class="k">await</span> <span class="n">run_analysis_task</span><span class="p">.</span><span class="nf">kiq</span><span class="p">(</span><span class="n">execution</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nf">pending</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="sh">"</span><span class="s">Analysis started</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The background task uses the <code class="language-plaintext highlighter-rouge">@with_async_tool_lifecycle</code> decorator to handle status tracking, result storage, and event publishing.</p>
+
+<h2 id="tool-results">Tool results</h2>
+
+<p>All tools return a <code class="language-plaintext highlighter-rouge">ToolResultBase</code> subclass:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">completed(data=...)</code></td>
+      <td>Sync success with typed payload</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pending(...)</code></td>
+      <td>Async tool dispatched</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">validation_error(...)</code></td>
+      <td>Bad input</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">not_found_error(...)</code></td>
+      <td>Resource missing</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">failed(...)</code></td>
+      <td>System failure</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="streaming">Streaming</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">ChatEngine</code> uses pydantic-ai’s <code class="language-plaintext highlighter-rouge">agent.iter()</code> to stream responses. Text chunks are published to a per-user Redis channel as <code class="language-plaintext highlighter-rouge">ThreadStreamEvent</code>s. The SSE endpoint (<code class="language-plaintext highlighter-rouge">/_events/chat/{thread_id}</code>) subscribes to this channel and delivers events to the browser.</p>
+
+<p>The admin UI connects via HTMX’s <code class="language-plaintext highlighter-rouge">sse-connect</code> and swaps chunks into the response area in real time.</p>
+
+<h2 id="database-models">Database models</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Thread</code></td>
+      <td>Conversation container, belongs to a user</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Message</code></td>
+      <td>User or assistant message with structured parts (text, tool calls, tool results)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Completion</code></td>
+      <td>Tracks a single agent run — status, tokens, timing, errors</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AsyncToolExecution</code></td>
+      <td>Tracks a background tool run — status, result, errors</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="cancellation">Cancellation</h2>
+
+<p>Users can cancel a running completion. The API sets a Redis key (<code class="language-plaintext highlighter-rouge">completion:cancel:{id}</code>) that the <code class="language-plaintext highlighter-rouge">ChatEngine</code> checks between streaming chunks and tool calls. Cancelled completions are marked in the database and a <code class="language-plaintext highlighter-rouge">ThreadCancelledEvent</code> is published.</p>
+
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-meta">&copy; 2026 Krondor Corp</span>
+    <div class="footer-links">
+      <a href="https://github.com/krondor-corp/generic">GitHub</a>
+      <a href="/docs/overview/">Docs</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

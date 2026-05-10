@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Shared config primitives — sourceable by any script, no confit dependency
+
+if [ -n "${_CONFIG_LOADED:-}" ]; then return 0; fi
+_CONFIG_LOADED=1
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+PROJECT_NAME="$(confit resolve project.name 2>/dev/null)" || {
+    echo "Error: confit could not resolve project.name" >&2
+    exit 1
+}
+
+# Branch slug — safe for postgres db names, truncated to 40 chars
+BRANCH="$(git -C "$PROJECT_ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)"
+BRANCH_SLUG="$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9]/_/g;s/__*/_/g;s/^_//;s/_$//' | cut -c1-40)"
+
+# Branch-aware database name
+case "$BRANCH" in
+    main|master) DB_NAME="$PROJECT_NAME" ;;
+    *)           DB_NAME="${PROJECT_NAME}_${BRANCH_SLUG}" ;;
+esac
+
+# Port offset — deterministic from branch name, 0 on main
+case "$BRANCH" in
+    main|master) PORT_OFFSET=0 ;;
+    *)           PORT_OFFSET=$(( $(echo -n "$BRANCH" | cksum | awk '{print $1}') % 100 + 1 )) ;;
+esac
+
+# Default ports
+POSTGRES_PORT=5432
+REDIS_PORT=6379
+
+# Container runtime — configured in confit.toml [runtime.container]
+CONTAINER_RUNTIME="$(confit resolve runtime.container 2>/dev/null || echo docker)"
+
+check_runtime() {
+    if ! $CONTAINER_RUNTIME ps &>/dev/null; then
+        confit log --err "$CONTAINER_RUNTIME is not running. Please start it first."
+        exit 1
+    fi
+}
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+GRAY='\033[0;90m'
+NC='\033[0m'
+
+print_header()  { echo -e "\n${YELLOW}=== $1 ===${NC}"; }
+print_error()   { echo -e "${RED}✗ $1${NC}"; }
+print_success() { echo -e "${GREEN}✓ $1${NC}"; }
+print_info()    { echo -e "${BLUE}ℹ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
+is_in_list()    { echo "$1" | grep -q "$2"; }

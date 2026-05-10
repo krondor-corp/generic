@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Delegates to web/bin/redis
+set -euo pipefail
+WEB_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+exec "$WEB_ROOT/bin/redis" "$@"

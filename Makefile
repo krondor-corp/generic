@@ -1,10 +1,10 @@
-.PHONY: help install bootstrap validate kamal ssh services infra tfc
+.PHONY: help install bootstrap validate kamal ssh services infra tfc wiki
 
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_-]+:.*?##/ { printf "  %-20s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
-install: ## Install confit CLI (requires cargo)
-	@cargo install --git https://github.com/amiller68/confit
+install: ## Install confit CLI
+	@curl -fsSL https://raw.githubusercontent.com/krondor-corp/confit/main/install.sh | bash
 
 services: ## List configured services
 	@confit keys services
@@ -26,3 +26,6 @@ kamal: ## Run Kamal (usage: make kamal ARGS="<service> <command>")
 
 ssh: ## SSH into the server (usage: make ssh USER=admin)
 	@./bin/ssh $(USER)
+
+wiki: ## Serve wiki locally with live reload
+	@$(MAKE) -C wiki dev

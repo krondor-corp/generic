@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include head.html %}
+</head>
+<body>
+  {% include header.html %}
+  <main class="home">
+
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-eyebrow">Full-stack project template</span>
+        <h1 class="hero-title">generic</h1>
+        <p class="hero-tagline">A batteries-included monorepo for deploying web services to a single server. Terraform for infra, Ansible for provisioning, Kamal for zero-downtime deploys, confit for config.</p>
+        <div class="hero-install" id="hero-install">
+          <code>gh repo create my-project --template krondor-corp/generic</code>
+          <button class="copy-btn copy-btn-visible" onclick="navigator.clipboard.writeText('gh repo create my-project --template krondor-corp/generic').then(function(){var b=document.querySelector('#hero-install .copy-btn');b.textContent='copied';setTimeout(function(){b.textContent='copy'},1500)})">copy</button>
+        </div>
+        <div class="hero-links">
+          <a href="{{ '/docs/overview/' | relative_url }}" class="hero-cta">Get started</a>
+          <a href="https://github.com/krondor-corp/generic" class="hero-link">View on GitHub</a>
+        </div>
+      </div>
+      <div class="hero-logo">
+        <img src="{{ '/assets/images/favicon.svg' | relative_url }}" alt="generic logo">
+      </div>
+    </section>
+
+<section class="features">
+      <h2 class="section-heading">What's included</h2>
+      <p class="section-description">Everything you need to go from an empty repo to a production deployment on a single DigitalOcean droplet.</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Provision</h3>
+          <p>Terraform creates a DigitalOcean droplet, generates SSH keys, and configures DNS records via Cloudflare. State is stored in Terraform Cloud so your infra is versioned and auditable.</p>
+        </div>
+        <div class="feature">
+          <h3>Configure</h3>
+          <p>Ansible bootstraps the server with users, SSH hardening, Docker, and a firewall. One command, fully idempotent, tag-selective. Run it once or run it every time &mdash; same result.</p>
+        </div>
+        <div class="feature">
+          <h3>Deploy</h3>
+          <p>Kamal builds Docker containers from source and deploys with zero-downtime rolling updates behind Traefik. Automatic SSL via Let's Encrypt, no nginx config to manage.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="commands-preview">
+      <h2 class="section-heading">Workflow</h2>
+      <p class="section-description">From first clone to production in four commands.</p>
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <span class="step-cmd">make infra</span>
+          <div>
+            <strong>Create infrastructure</strong>
+            <p>Runs <code>terraform apply</code> to provision the droplet, DNS, and SSH keys.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-cmd">make bootstrap</span>
+          <div>
+            <strong>Provision the server</strong>
+            <p>Runs the Ansible playbook to install packages, create users, and harden SSH.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-cmd">make kamal</span>
+          <div>
+            <strong>Deploy services</strong>
+            <p>Builds containers and pushes them with zero-downtime rolling deploys via Kamal.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <span class="step-cmd">make ssh</span>
+          <div>
+            <strong>Connect to the server</strong>
+            <p>SSH into the droplet using the Terraform-generated key. Debug, tail logs, run one-off commands.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2 class="section-heading">Service stacks</h2>
+      <p class="section-description">Each stack lives under <code>web/</code> with its own Makefile, Dockerfile, and dev tooling. Mix and match or use one.</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>TypeScript</h3>
+          <p>React frontend with a Node.js API. pnpm for package management, turbo for monorepo builds. Vite dev server with HMR.</p>
+          <a href="https://ts.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+        <div class="feature">
+          <h3>Python</h3>
+          <p>FastAPI backend with TaskIQ workers, Redis queues, and pydantic-ai for structured AI interactions. Includes admin dashboard and SSE streaming.</p>
+          <a href="https://py.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+        <div class="feature">
+          <h3>Rust</h3>
+          <p>Axum web server with Askama templates, SQLite, and HTMX. Single binary deployment with zero runtime dependencies.</p>
+          <a href="https://rust.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-bottom">
+      <p>Built and maintained by <a href="https://github.com/krondor-corp">Krondor Corp</a>. This template is opinionated &mdash; it's for small teams that want to ship to a single server and understand every piece of their stack. If you need multi-region, Kubernetes, or managed services, you've outgrown this. That's a good problem to have.</p>
+    </section>
+
+  </main>
+  {% include footer.html %}
+</body>
+</html>

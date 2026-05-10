@@ -13,13 +13,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy bin scripts from root (needed by db.sh)
-COPY bin/ ../bin/
-
-# Copy project configuration (needed by bin/config)
-COPY .env.project ../.env.project
-COPY .env.vault ../.env.vault
-
 # Copy Python workspace files
 COPY py/uv.lock ./uv.lock
 COPY py/pyproject.toml ./pyproject.toml
@@ -37,9 +30,6 @@ COPY py/apps/py-app/static/ ./apps/py-app/static/
 
 # Sync uv workspace to install all Python packages
 RUN uv sync --all-packages
-
-# Make all shell scripts executable
-RUN find ../bin -type f -name "*.sh" -exec chmod +x {} \;
 
 # Create startup script that runs migrations then starts the server
 RUN echo '#!/bin/bash\n\

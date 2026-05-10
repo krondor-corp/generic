@@ -10,11 +10,11 @@ install: ## Install dependencies
 	@pnpm install
 
 .PHONY: dev
-dev: styles ## Run development servers (all apps, setup styles first)
+dev: ## Run development servers (all apps)
 	@pnpm dev
 
 .PHONY: build
-build: styles ## Build all projects (setup styles first)
+build: ## Build all projects
 	@pnpm build
 
 .PHONY: test
@@ -51,10 +51,6 @@ clean: ## Clean build artifacts, dependencies, and node_modules
 	@echo "Cleaning turbo cache..."
 	@rm -rf .turbo
 	@echo "✓ Clean complete"
-
-.PHONY: styles
-styles: ## Setup branding asset symlinks
-	@./bin/styles.sh
 
 .PHONY: docker-build
 docker-build: ## Build Docker images

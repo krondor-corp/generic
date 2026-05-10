@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_NAME="$(confit resolve project.name)"
+PORT="$(confit resolve accessories.redis.port)"
+
+CONTAINER_NAME="${PROJECT_NAME}-redis"
+VOLUME_NAME="${PROJECT_NAME}-redis-data"
+IMAGE="$(confit resolve accessories.redis.image)"
+
+RUNTIME="$(confit resolve runtime.container 2>/dev/null || echo docker)"
+
+up() {
+    if $RUNTIME ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        confit log --ok "Redis container is already running."
+        return 0
+    fi
+
+    if $RUNTIME ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        confit log "Starting existing Redis container..."
+        $RUNTIME start "$CONTAINER_NAME"
+    else
+        confit log "Creating Redis container..."
+        $RUNTIME volume create "$VOLUME_NAME" 2>/dev/null || true
+        $RUNTIME run \
+            --name "$CONTAINER_NAME" \
+            --publish "${PORT}:6379" \
+            --volume "${VOLUME_NAME}:/data" \
+            --health-cmd="redis-cli ping || exit 1" \
+            --health-interval=5s \
+            --health-timeout=5s \
+            --health-retries=5 \
+            --detach \
+            "$IMAGE" \
+            redis-server --appendonly yes
+    fi
+
+    confit log "Waiting for Redis to be ready..."
+    for i in $(seq 1 15); do
+        if $RUNTIME exec "$CONTAINER_NAME" redis-cli ping 2>/dev/null | grep -q "PONG"; then
+            confit log --ok "Redis is ready on port $PORT"
+            return 0
+        fi
+        sleep 1
+    done
+    confit log --err "Redis did not become ready in time"
+    exit 1
+}
+
+down() {
+    confit log "Stopping Redis..."
+    $RUNTIME stop "$CONTAINER_NAME" 2>/dev/null || true
+    $RUNTIME rm -f "$CONTAINER_NAME" 2>/dev/null || true
+    $RUNTIME volume rm -f "$VOLUME_NAME" 2>/dev/null || true
+    confit log --ok "Redis cleaned up"
+}
+
+endpoint() {
+    echo "redis://localhost:${PORT}"
+}
+
+connect() {
+    if command -v redis-cli &>/dev/null; then
+        redis-cli -h localhost -p "$PORT"
+    else
+        $RUNTIME exec -it "$CONTAINER_NAME" redis-cli
+    fi
+}
+
+status() {
+    if $RUNTIME ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        confit log --ok "Redis is running"
+        if $RUNTIME exec "$CONTAINER_NAME" redis-cli ping 2>/dev/null | grep -q "PONG"; then
+            confit log --ok "Connection healthy"
+        fi
+    else
+        confit log --err "Redis is not running"
+    fi
+}
+
+help() {
+    echo "Usage: $0 <command>"
+    echo ""
+    echo "Commands:"
+    echo "  up        Start Redis container"
+    echo "  down      Stop and remove container + volume"
+    echo "  endpoint  Print REDIS_URL"
+    echo "  connect   Open redis-cli shell"
+    echo "  status    Check container status"
+}
+
+CMD=${1:-help}
+shift || true
+$CMD "$@"

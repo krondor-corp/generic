@@ -5,50 +5,44 @@ help: ## Show this help message
 	@echo 'Available targets:'
 	@awk 'BEGIN {FS = ":.*##"; printf "\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  %-20s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
-# Get branch-specific database name (derived from git branch)
-# For local dev, we use worktree-ports to get branch-specific database
-# In CI, POSTGRES_URL is set by the environment or defaults in conftest.py
-PROJECT_ROOT := $(shell cd ../../../ && pwd)
-WORKTREE_DB_NAME := $(shell PROJECT_ROOT=$(PROJECT_ROOT) && source $(PROJECT_ROOT)/bin/utils && source $(PROJECT_ROOT)/bin/config && source $(PROJECT_ROOT)/bin/worktree-ports && get_worktree_db_name 2>/dev/null || echo "krondor-generic")
-TEST_POSTGRES_URL := $(shell ./bin/db.sh endpoint $(WORKTREE_DB_NAME) 2>/dev/null)
+WEB_ROOT := $(shell cd ../../.. && pwd)
+PROJECT_ROOT := $(shell cd ../../../.. && pwd)
+POSTGRES_URL := $(shell confit resolve accessories.postgres.url 2>/dev/null)
 
-# Helper to set POSTGRES_URL only if we got a valid one from endpoint
-ifdef TEST_POSTGRES_URL
-  POSTGRES_ENV := POSTGRES_URL="$(TEST_POSTGRES_URL)"
+ifdef POSTGRES_URL
+  POSTGRES_ENV := POSTGRES_URL="$(POSTGRES_URL)"
 else
   POSTGRES_ENV :=
 endif
 
 .PHONY: setup
 setup: ## Start postgres + redis containers, migrate, and seed
-	@./bin/db.sh up
-	@./bin/redis.sh up
-	@echo "Setting up branch-specific database: $(WORKTREE_DB_NAME)..."
-	@./bin/db.sh ensure_database "$(WORKTREE_DB_NAME)"
-	@$(POSTGRES_ENV) ./bin/db.sh migrate
-	@$(POSTGRES_ENV) ./bin/seed.sh all
+	@$(WEB_ROOT)/bin/postgres up
+	@$(WEB_ROOT)/bin/redis up
+	@$(WEB_ROOT)/bin/postgres ensure_database
+	@$(POSTGRES_ENV) ./bin/db migrate
+	@$(POSTGRES_ENV) ./bin/seed all
 
 .PHONY: seed
 seed: ## Seed database with initial data
-	@$(POSTGRES_ENV) ./bin/seed.sh all
+	@$(POSTGRES_ENV) ./bin/seed all
 
 .PHONY: seed-users
 seed-users: ## Seed users only
-	@./bin/seed.sh users
+	@./bin/seed users
 
 .PHONY: seed-dry-run
 seed-dry-run: ## Show what would be seeded (dry run)
-	@./bin/seed.sh --dry-run
+	@./bin/seed --dry-run
 
 .PHONY: teardown
 teardown: ## Stop and remove all containers
-	@./bin/db.sh down
-	@./bin/redis.sh down
+	@$(WEB_ROOT)/bin/postgres down
+	@$(WEB_ROOT)/bin/redis down
 
 .PHONY: wipe
 wipe: ## Drop the branch-specific database (keeps container running)
-	@echo "Wiping branch-specific database: $(WORKTREE_DB_NAME)..."
-	@./bin/db.sh wipe "$(WORKTREE_DB_NAME)"
+	@$(WEB_ROOT)/bin/postgres wipe
 
 .PHONY: test
 test: ## Run tests
@@ -83,32 +77,32 @@ clean: ## Clean build artifacts
 # Database commands
 .PHONY: db-up
 db-up: ## Start PostgreSQL container
-	@./bin/db.sh up
+	@$(WEB_ROOT)/bin/postgres up
 
 .PHONY: db-down
 db-down: ## Stop and remove PostgreSQL container (deletes data)
-	@./bin/db.sh down
+	@$(WEB_ROOT)/bin/postgres down
 
 .PHONY: db-status
 db-status: ## Check PostgreSQL container status
-	@./bin/db.sh status
+	@$(WEB_ROOT)/bin/postgres status
 
 .PHONY: db-endpoint
 db-endpoint: ## Print PostgreSQL connection URL
-	@./bin/db.sh endpoint
+	@$(WEB_ROOT)/bin/postgres endpoint
 
 .PHONY: db-connect
 db-connect: ## Connect to PostgreSQL with psql
-	@./bin/db.sh connect
+	@$(WEB_ROOT)/bin/postgres connect
 
 .PHONY: db-migrate
 db-migrate: ## Run pending database migrations
-	@$(POSTGRES_ENV) ./bin/db.sh migrate
+	@$(POSTGRES_ENV) ./bin/db migrate
 
 .PHONY: db-prepare
 db-prepare: ## Create new migration (usage: make db-prepare MSG="description")
 ifdef MANUAL
-	@$(POSTGRES_ENV) ./bin/db.sh prepare --manual "$(MSG)"
+	@$(POSTGRES_ENV) ./bin/db prepare --manual "$(MSG)"
 else
-	@$(POSTGRES_ENV) ./bin/db.sh prepare "$(MSG)"
+	@$(POSTGRES_ENV) ./bin/db prepare "$(MSG)"
 endif

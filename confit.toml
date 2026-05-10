@@ -2,7 +2,7 @@
 cmd = "op read {uri}"
 
 [providers.tf]
-cmd = "terraform -chdir=iac/stages/{stage} output -raw {path}"
+cmd = "TF_TOKEN_app_terraform_io=$(confit resolve --reveal credentials.cloud.tfc_token) terraform -chdir=iac/stages/{stage} output -raw {path}"
 
 [project]
 name = "krondor-generic"
@@ -10,7 +10,8 @@ users = ["admin", "kamal"]
 admin_user = "admin"
 admin_email = "al@krondor.org"
 tfc_org = "krondor-generic-org"
-dns_root_zone = "example.com"
+dns_zone = "krondor.org"
+dns_root_zone = "generic.krondor.org"
 
 [vars]
 stage = "production"
@@ -27,28 +28,45 @@ private_key = "secret://tf://ssh_private_key"
 public_key = "tf://ssh_public_key"
 
 [credentials.cloud]
+docker_hub_username = "amiller68"
 docker_hub_token = "secret://op://{vaults.cloud}/DOCKER_HUB_TOKEN/credential"
 cloudflare_api_token = "secret://op://{vaults.cloud}/CLOUDFLARE_API_TOKEN/credential"
 cloudflare_account_id = "op://{vaults.cloud}/CLOUDFLARE_API_TOKEN/username"
-digitalocean_token = "secret://op://{vaults.cloud}/DIGITALOCEAN_TOKEN/credential"
-tfc_token = "secret://op://{vaults.cloud}/TFC_TOKEN/credential"
+digitalocean_token = "secret://op://{vaults.cloud}/DO_API_TOKEN/credential"
+tfc_token = "secret://op://{vaults.cloud}/TERRAFORM_CLOUD_API_TOKEN/credential"
 
 [credentials.app]
-google_oauth_client_id = "secret://op://{vaults.app}/GOOGLE_OAUTH/client_id"
-google_oauth_client_secret = "secret://op://{vaults.app}/GOOGLE_OAUTH/client_secret"
-anthropic_api_key = "secret://op://{vaults.app}/ANTHROPIC_API_KEY/credential"
+google_o_auth_client_id = "secret://op://{vaults.app}/GOOGLE_O_AUTH_CLIENT/username"
+google_o_auth_client_secret = "secret://op://{vaults.app}/GOOGLE_O_AUTH_CLIENT/credential"
+anthropic_api_key = "secret://op://{vaults.app}/ANTHROPIC/credential"
+
+[runtime]
+container = "podman"
+
+[worktree]
+branch = "$(source bin/config && echo $BRANCH)"
+branch_slug = "$(source bin/config && echo $BRANCH_SLUG)"
+port_offset = "$(source bin/config && echo $PORT_OFFSET)"
+db_name = "$(source bin/config && echo $DB_NAME)"
+
+[accessories.postgres]
+image = "postgres:17-alpine"
+port = "$(source bin/config && echo $POSTGRES_PORT)"
+url = "$(web/bin/postgres endpoint)"
+
+[accessories.redis]
+image = "redis:7-alpine"
+port = "$(source bin/config && echo $REDIS_PORT)"
+url = "$(web/bin/redis endpoint)"
 
 [services.py]
-repo = "krondor-corp/generic"
 domain = "py.{project.dns_root_zone}"
 port = 8000
 
 [services.ts-web]
-repo = "krondor-corp/generic"
 domain = "ts.{project.dns_root_zone}"
 port = 3000
 
 [services.rust]
-repo = "krondor-corp/generic"
 domain = "rust.{project.dns_root_zone}"
 port = 3000

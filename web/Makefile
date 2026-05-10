@@ -49,10 +49,6 @@ install: ## Install dependencies for all projects
 install-%: ## Install dependencies for the given project
 	@$(MAKE) run-for PROJECT=$(@:install-%=%) CMD=install
 
-.PHONY: dev
-dev: ## Run development server for the rust project
-	@$(MAKE) run-for PROJECT=rust CMD=dev
-
 .PHONY: dev-%
 dev-%: ## Run development server for the given project
 	@$(MAKE) run-for PROJECT=$(@:dev-%=%) CMD=dev
@@ -194,46 +190,6 @@ clean-%: ## Clean the given project
 .PHONY: ports
 ports: ## Show dev server port assignment for current branch
 	@./bin/worktree-ports
-
-.PHONY: worktree-create
-worktree-create: ## Create a new git worktree - usage: make worktree-create BRANCH=<branch-name>
-	@if [ -z "$(BRANCH)" ]; then \
-		echo "Error: BRANCH is required. Usage: make worktree-create BRANCH=feature/my-branch"; \
-		exit 1; \
-	fi
-	@./bin/worktree --repo . create $(BRANCH)
-
-.PHONY: worktree-list
-worktree-list: ## List all git worktrees
-	@./bin/worktree --repo . list
-
-.PHONY: worktree-remove
-worktree-remove: ## Remove a git worktree - usage: make worktree-remove BRANCH=<branch-name>
-	@if [ -z "$(BRANCH)" ]; then \
-		echo "Error: BRANCH is required. Usage: make worktree-remove BRANCH=feature/my-branch"; \
-		exit 1; \
-	fi
-	@./bin/worktree --repo . remove $(BRANCH)
-
-.PHONY: worktree-cleanup
-worktree-cleanup: ## Remove all git worktrees
-	@./bin/worktree --repo . cleanup
-
-# Terraform Cloud management - pass all arguments after 'tfc' to the script
-.PHONY: tfc
-tfc: ## Terraform Cloud management - pass all arguments after 'tfc' to the script
-	@./bin/tfc $(filter-out $@,$(MAKECMDGOALS))
-
-
-# Infrastructure management - pass all arguments after 'iac' to the script
-.PHONY: iac
-iac: ## Infrastructure management - run terraform with vault secrets
-	@./bin/iac $(filter-out $@,$(MAKECMDGOALS))
-
-# Deployment management - pass all arguments after 'deploy' to the kamal script
-.PHONY: kamal
-kamal: ## Deploy services using Kamal - usage: make kamal <service> <stage> <command>
-	@./bin/kamal $(filter-out $@,$(MAKECMDGOALS))
 
 # Catch additional arguments to tfc, ghcr, iac, and deploy commands
 %:

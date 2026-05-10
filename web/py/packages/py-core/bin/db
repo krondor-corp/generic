@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# Postgres container management + Alembic migrations for py-core
+
+set -euo pipefail
+
+PY_CORE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+WEB_ROOT="$(cd "$PY_CORE_ROOT/../../.." && pwd)"
+POSTGRES="$WEB_ROOT/bin/postgres"
+
+# Container management — delegate to shared script
+up()              { "$POSTGRES" up; }
+down()            { "$POSTGRES" down; }
+status()          { "$POSTGRES" status; }
+endpoint()        { "$POSTGRES" endpoint "${1:-}"; }
+connect()         { "$POSTGRES" connect "${1:-}"; }
+ensure_database() { "$POSTGRES" ensure_database "$1"; }
+wipe()            { "$POSTGRES" wipe "${1:-}"; }
+
+migrate() {
+    if [ -z "${POSTGRES_URL:-}" ]; then
+        confit log "POSTGRES_URL not set, using confit"
+        export POSTGRES_URL="$(confit resolve accessories.postgres.url)"
+    fi
+
+    confit log "Waiting for database..."
+    "$POSTGRES" status &>/dev/null || sleep 2
+
+    confit log "Running Alembic migrations..."
+    pushd "$PY_CORE_ROOT" > /dev/null
+    POSTGRES_URL="$POSTGRES_URL" uv run alembic upgrade head
+    popd > /dev/null
+    confit log --ok "Migrations complete"
+}
+
+prepare() {
+    local manual=false
+    local description=""
+
+    if [ "${MANUAL:-}" = "1" ] || [ "${MANUAL:-}" = "true" ]; then
+        manual=true
+    fi
+
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            --manual) manual=true; shift ;;
+            *) description="$*"; break ;;
+        esac
+    done
+
+    if [ -z "$description" ]; then
+        confit log --err "Please provide a description: $0 prepare [--manual] <description>"
+        exit 1
+    fi
+
+    up
+    export POSTGRES_URL="$(confit resolve accessories.postgres.url)"
+
+    pushd "$PY_CORE_ROOT" > /dev/null
+    if [ "$manual" = true ]; then
+        uv run alembic revision -m "$description"
+    else
+        uv run alembic revision --autogenerate -m "$description"
+    fi
+    popd > /dev/null
+    confit log --ok "Migration prepared"
+}
+
+help() {
+    echo "Usage: $0 <command> [args]"
+    echo ""
+    echo "Container (delegates to web/bin/postgres):"
+    echo "  up / down / status / endpoint / connect / ensure_database / wipe"
+    echo ""
+    echo "Migrations (Alembic):"
+    echo "  migrate                    Run pending migrations"
+    echo "  prepare [--manual] <desc>  Create a new migration"
+}
+
+CMD=${1:-help}
+shift || true
+
+case "$CMD" in
+up|down|status|endpoint|connect|ensure_database|wipe|migrate|prepare|help)
+    $CMD "$@"
+    ;;
+*)
+    confit log --err "Unknown command: $CMD"
+    help
+    exit 1
+    ;;
+esac
