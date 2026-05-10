@@ -18,3 +18,7 @@ dist/
 
 # Aider
 .aider*
+
+# jig
+.jig/
+jig.local.toml
