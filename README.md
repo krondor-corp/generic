@@ -102,3 +102,4 @@ Terraform, Ansible, and Kamal all read from confit. Wrapper scripts in `bin/` ha
 3. Create `config/deploy/<name>.yml` (use existing configs as a template)
 4. `make infra ARGS="apply"` to create the DNS record
 5. `make kamal ARGS="<name> setup && <name> deploy"`
+
