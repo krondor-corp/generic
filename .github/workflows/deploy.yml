@@ -26,7 +26,7 @@ jobs:
           ruby-version: '3.3'
 
       - name: Install Kamal
-        run: gem install kamal
+        run: gem install kamal -v 2.10.1
 
       - name: Install 1Password CLI
         uses: 1password/install-cli-action@v1
