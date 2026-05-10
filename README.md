@@ -1,5 +1,7 @@
 # generic
 
+<!-- daemon spawn verification: kro-136 -->
+
 A monorepo template for building and deploying web services to a single server. Application source, infrastructure, and deployment config all live together.
 
 **[Docs](https://generic.krondor.org/wiki/)** · **[Live Demo](https://generic.krondor.org)**
