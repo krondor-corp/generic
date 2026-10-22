@@ -71,6 +71,10 @@ port = 3000
 domain = "rust.{project.dns_root_zone}"
 port = 3000
 
-[services.mobile-api]
-domain = "mobile-api.{project.dns_root_zone}"
+# The mobile example: marketing page + device API on one domain. The app
+# bundle id is org.krondor.generic.ios. testflight_url stays empty until the
+# TestFlight build exists; the page then links to it.
+[services.ios]
+domain = "ios.{project.dns_root_zone}"
+testflight_url = ""
 port = 3000

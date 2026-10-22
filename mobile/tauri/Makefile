@@ -36,7 +36,7 @@ help: ## Show this help message
 
 # Debug builds of the app point a fresh install at the local server on
 # :$(SERVER_PORT) (DEFAULT_SERVER_URL in the app's state.rs); release
-# builds default to the deployed mobile-api domain. Settings overrides.
+# builds default to the deployed ios domain. Settings overrides.
 
 .PHONY: dev
 dev: ## Run the example app on desktop
@@ -53,7 +53,7 @@ dev-android: ## Run the example app in the Android emulator
 .PHONY: dev-server
 dev-server: ## Run the API server locally
 	@mkdir -p $(SERVER_DIR)/data
-	@confit log "Starting mobile-api on http://localhost:$(SERVER_PORT)..."
+	@confit log "Starting the ios server on http://localhost:$(SERVER_PORT) (page + API)..."
 	@env SQLITE_DATABASE_URL=sqlite://$(SERVER_DIR)/data/app.db \
 		LISTEN_ADDRESS=127.0.0.1:$(SERVER_PORT) \
 		POLL_INTERVAL_SECS=$${POLL_INTERVAL_SECS:-120} \

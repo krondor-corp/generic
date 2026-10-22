@@ -14,7 +14,7 @@ std/
   README.md                    The patterns.
 public-web-api/
   app/           The example Tauri app (src/ React, src-tauri/ Rust).
-  server/        Its Axum API server — deployed via Kamal as `mobile-api`.
+  server/        Its Axum server: marketing page + device API — deployed via Kamal as `ios`.
   README.md
 ```
 

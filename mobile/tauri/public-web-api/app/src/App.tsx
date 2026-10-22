@@ -195,7 +195,7 @@ function Settings({ status, onSaved }: { status: Status | null; onSaved: () => P
             inputMode="url"
             autoCapitalize="off"
             autoCorrect="off"
-            placeholder="https://mobile-api.generic.krondor.org"
+            placeholder="https://ios.generic.krondor.org"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />

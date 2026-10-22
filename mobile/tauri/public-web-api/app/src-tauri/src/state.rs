@@ -10,11 +10,11 @@ use crate::database::MIGRATOR;
 /// Where a fresh install points. The server is a free public API, so
 /// there is no setup screen: debug builds (`make dev`, `make dev-ios`,
 /// `make dev-android`) talk to the local dev server, release builds to
-/// the deployed `mobile-api` service. Settings overrides at runtime.
+/// the deployed `ios` service. Settings overrides at runtime.
 pub const DEFAULT_SERVER_URL: &str = if cfg!(debug_assertions) {
     DEV_SERVER_URL
 } else {
-    "https://mobile-api.generic.krondor.org"
+    "https://ios.generic.krondor.org"
 };
 
 /// The Android emulator reaches the host machine at 10.0.2.2; desktop and

@@ -103,5 +103,5 @@ app.manage(poller);
 
 1. `mkdir mobile/tauri/<name>/app` and copy `public-web-api/app` as a starting point; change `identifier` and `productName` in `tauri.conf.json`.
 2. Add `<name>/app/src-tauri` to `mobile/tauri/Cargo.toml` members and `<name>/app` to `pnpm-workspace.yaml`.
-3. If it needs its own server, copy `public-web-api/server`, add it to the workspace, and give it a Kamal config + confit service entry (see [Mobile API server](mobile-api-server)).
+3. If it needs its own server, copy `public-web-api/server`, add it to the workspace, and give it a Kamal config + confit service entry (see [Server](mobile-api-server)).
 4. Put anything the second app wants from the first into `std/`, not into a cross-import.

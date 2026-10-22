@@ -14,6 +14,9 @@ pub struct Config {
     pub poll_limit: usize,
     /// Base of the upstream JSON API (trailing slash matters for joins).
     pub upstream_base_url: Url,
+    /// Public TestFlight link for the marketing page. Unset (or empty)
+    /// until the build exists; the page then says so instead of linking.
+    pub testflight_url: Option<Url>,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -59,6 +62,11 @@ impl Config {
                 .unwrap_or_else(|_| "https://hacker-news.firebaseio.com/v0/".to_string()),
         )?;
 
+        let testflight_url = match std::env::var("TESTFLIGHT_URL") {
+            Ok(value) if !value.trim().is_empty() => Some(Url::parse(value.trim())?),
+            _ => None,
+        };
+
         Ok(Self {
             listen_address,
             sqlite_database_url,
@@ -66,6 +74,7 @@ impl Config {
             poll_interval,
             poll_limit,
             upstream_base_url,
+            testflight_url,
         })
     }
 }

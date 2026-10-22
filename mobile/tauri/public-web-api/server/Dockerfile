@@ -37,9 +37,11 @@ RUN mkdir -p mobile/tauri/std/rs/src \
 WORKDIR /build/mobile/tauri
 RUN cargo build --release -p public-web-api 2>/dev/null || true
 
-# Copy real source
+# Copy real source (templates and static are compiled into the binary)
 COPY mobile/tauri/public-web-api/server/src public-web-api/server/src
 COPY mobile/tauri/public-web-api/server/migrations public-web-api/server/migrations
+COPY mobile/tauri/public-web-api/server/templates public-web-api/server/templates
+COPY mobile/tauri/public-web-api/server/static public-web-api/server/static
 
 # Build for real (touch so cargo notices the dummy files were replaced)
 RUN touch public-web-api/server/src/main.rs public-web-api/server/src/lib.rs && \

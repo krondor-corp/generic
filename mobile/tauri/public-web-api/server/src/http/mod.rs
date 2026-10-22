@@ -1,5 +1,6 @@
 pub mod api;
 pub mod error;
+pub mod html;
 
 use axum::Router;
 use generic_rust_core::http::health;
@@ -10,6 +11,9 @@ use tower_http::trace::TraceLayer;
 use crate::runtime;
 use crate::state::AppState;
 
+/// One domain, three surfaces: the marketing page at `/` (plus its
+/// static files), health under `/_status`, and the device API under
+/// `/api/v0`. CORS is only relevant to the API.
 pub struct HttpServer;
 
 #[async_trait::async_trait]
@@ -25,10 +29,10 @@ impl runtime::Service for HttpServer {
             .allow_origin(Any);
 
         let app = Router::new()
+            .merge(html::router())
             .nest("/_status", health::router())
-            .nest("/api/v0", api::router())
+            .nest("/api/v0", api::router().layer(cors))
             .with_state(state)
-            .layer(cors)
             .layer(TraceLayer::new_for_http());
 
         tracing::info!("listening on {addr}");

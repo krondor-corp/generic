@@ -1,6 +1,6 @@
-service: <%= `confit resolve project.name`.strip %>-mobile-api
+service: <%= `confit resolve project.name`.strip %>-ios
 deploy_timeout: 180
-image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-mobile-api
+image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-ios
 
 servers:
   web:
@@ -24,8 +24,8 @@ builder:
 
 proxy:
   ssl: true
-  host: <%= `confit resolve services.mobile-api.domain`.strip %>
-  app_port: <%= `confit resolve services.mobile-api.port`.strip %>
+  host: <%= `confit resolve services.ios.domain`.strip %>
+  app_port: <%= `confit resolve services.ios.port`.strip %>
   healthcheck:
     path: /_status/livez
 
@@ -33,9 +33,10 @@ env:
   clear:
     SQLITE_DATABASE_URL: sqlite:///data/app.db
     LISTEN_ADDRESS: 0.0.0.0:3000
+    TESTFLIGHT_URL: "<%= `confit resolve services.ios.testflight_url`.strip %>"
     LOG_LEVEL: info
     POLL_INTERVAL_SECS: 300
     POLL_LIMIT: 30
 
 volumes:
-  - /var/lib/kamal-volumes/<%= `confit resolve project.name`.strip %>-mobile-api/data:/data
+  - /var/lib/kamal-volumes/<%= `confit resolve project.name`.strip %>-ios/data:/data

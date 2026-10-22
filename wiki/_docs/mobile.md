@@ -15,7 +15,7 @@ mobile/
       ts/                  # @mobile/std  — typed command/event bridge for the React frontend
     public-web-api/
       app/                 # the Tauri app (React + Vite frontend, src-tauri Rust backend)
-      server/              # its Axum API server, deployed via Kamal as `mobile-api`
+      server/              # its Axum server (marketing page + API), deployed via Kamal as `ios`
 ```
 
 ## The shape of a mobile app here
@@ -31,7 +31,7 @@ Every example follows the same split:
 
 | Service | Stack | Deploy config |
 |---------|-------|---------------|
-| mobile-api | Axum + SQLite + Apalis, on `generic-rust-core` | `config/deploy/mobile-api.yml` |
+| ios | Axum + SQLite + Apalis + Askama, on `generic-rust-core`; `ios.generic.krondor.org` | `config/deploy/ios.yml` |
 
 The app itself is not deployed by Kamal; it is built with the Tauri CLI for iOS, Android, and desktop. See [Tauri](mobile-tauri).
 

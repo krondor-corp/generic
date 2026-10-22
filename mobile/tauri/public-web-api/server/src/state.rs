@@ -3,6 +3,7 @@ use std::time::Duration;
 
 use axum::extract::FromRef;
 use generic_rust_core::Version;
+use url::Url;
 
 use crate::config::Config;
 use crate::database::{Database, MIGRATOR};
@@ -20,6 +21,7 @@ pub struct AppState {
     pub upstream: HackerNews,
     pub events: EventBus,
     pub tasks: TaskProducer,
+    pub testflight_url: Option<String>,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -45,6 +47,7 @@ impl AppState {
             upstream,
             events,
             tasks,
+            testflight_url: config.testflight_url.as_ref().map(Url::to_string),
         })
     }
 }

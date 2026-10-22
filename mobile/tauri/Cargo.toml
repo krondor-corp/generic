@@ -2,7 +2,7 @@
 #
 #   std/api                     mobile-api        — HTTP contract + client (device <-> server)
 #   std/rs                      mobile-std        — on-device runtime (SQLite, poller, notify)
-#   public-web-api/server       public-web-api    — Axum JSON API, deployed via Kamal
+#   public-web-api/server       public-web-api    — Axum: marketing page + device API, deployed via Kamal as `ios`
 #   public-web-api/app/src-tauri public-web-api-app — the Tauri app itself
 #
 # Shared plumbing comes from web/rust/crates/core by path.
@@ -42,6 +42,11 @@ tower-http = { version = "0.6", features = ["fs", "cors", "sensitive-headers", "
 http = "1.0"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
 url = { version = "2.5", features = ["serde"] }
+
+# Server-rendered HTML (the server's own marketing page), as in web/rust
+askama = "0.12"
+rust-embed = "8.5"
+mime_guess = "2.0"
 
 # Logging/tracing
 tracing = "0.1"

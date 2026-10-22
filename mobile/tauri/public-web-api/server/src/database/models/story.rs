@@ -140,6 +140,14 @@ impl Story {
         }
     }
 
+    /// The most recent `limit` stories, newest first (for the web page).
+    pub async fn latest(limit: u32, db: &Database) -> Result<Vec<Self>, sqlx::Error> {
+        sqlx::query_as::<_, Story>("SELECT * FROM stories ORDER BY seq DESC LIMIT ?")
+            .bind(limit)
+            .fetch_all(&**db)
+            .await
+    }
+
     /// Current cursor: the highest `seq`, or 0 when empty.
     pub async fn max_seq(db: &Database) -> Result<i64, sqlx::Error> {
         sqlx::query_scalar::<_, i64>("SELECT COALESCE(MAX(seq), 0) FROM stories")
