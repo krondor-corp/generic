@@ -10,7 +10,7 @@
 resolver = "2"
 members = [
     "std/api",
-#    "std/rs",
+    "std/rs",
 #    "public-web-api/server",
 #    "public-web-api/app/src-tauri",
 ]
