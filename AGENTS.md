@@ -45,6 +45,8 @@ make kamal ARGS="py deploy"  # Deploy a service
 make ssh USER=admin          # SSH into the server
 make validate                # Check all confit values resolve
 make wiki                    # Serve wiki locally
+make clean                   # Remove build artifacts everywhere (clean-web, clean-mobile, clean-wiki)
+make du                      # Show what build artifacts cost on disk
 
 # Per-service (cd into web/py, web/rust, or web/ts)
 make install                 # Install dependencies
