@@ -11,14 +11,12 @@ use crate::state::{keys, AppState};
 #[tauri::command]
 pub async fn save_settings(
     url: String,
-    token: String,
     device_name: String,
     state: State<'_, AppState>,
     poller: State<'_, Poller>,
 ) -> mobile_std::Result<Status> {
     ServerConfig {
         url: url.trim().trim_end_matches('/').to_string(),
-        token: token.trim().to_string(),
     }
     .save(&state.settings)
     .await?;
@@ -41,9 +39,9 @@ pub async fn save_settings(
 /// Hit `/_status/livez` with the *unsaved* form values so the user can
 /// check before committing.
 #[tauri::command]
-pub async fn test_connection(url: String, token: String) -> mobile_std::Result<String> {
+pub async fn test_connection(url: String) -> mobile_std::Result<String> {
     let base = Url::parse(url.trim())?;
-    let client = Client::with_bearer(&base, token.trim())?;
+    let client = Client::new(&base)?;
     let health = client.call(HealthRequest).await?;
     Ok(format!("Server reachable: {}", health.status))
 }

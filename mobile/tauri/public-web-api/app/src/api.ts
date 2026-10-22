@@ -16,7 +16,6 @@ export interface Story {
 
 export interface ServerConfig {
   url: string;
-  token: string;
 }
 
 export interface DeviceInfo {
@@ -41,10 +40,8 @@ export interface SyncReport {
 }
 
 export const getStatus = command<void, Status>("get_status");
-export const saveSettings = command<{ url: string; token: string; deviceName: string }, Status>(
-  "save_settings",
-);
-export const testConnection = command<{ url: string; token: string }, string>("test_connection");
+export const saveSettings = command<{ url: string; deviceName: string }, Status>("save_settings");
+export const testConnection = command<{ url: string }, string>("test_connection");
 export const listStories = command<{ limit: number }, Story[]>("list_stories");
 export const syncNow = command<void, SyncReport>("sync_now");
 export const openStory = command<{ url: string }, void>("open_story");

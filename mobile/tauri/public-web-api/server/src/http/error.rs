@@ -6,8 +6,6 @@ use axum::Json;
 
 #[derive(Debug, thiserror::Error)]
 pub enum ApiError {
-    #[error("unauthorized")]
-    Unauthorized,
     #[error("{0}")]
     BadRequest(String),
     #[error("database error")]
@@ -17,7 +15,6 @@ pub enum ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let status = match &self {
-            ApiError::Unauthorized => StatusCode::UNAUTHORIZED,
             ApiError::BadRequest(_) => StatusCode::BAD_REQUEST,
             ApiError::Database(e) => {
                 tracing::error!("database error: {e}");

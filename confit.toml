@@ -39,8 +39,6 @@ tfc_token = "secret://op://{vaults.cloud}/TERRAFORM_CLOUD_API_TOKEN/credential"
 google_o_auth_client_id = "secret://op://{vaults.app}/GOOGLE_O_AUTH_CLIENT/username"
 google_o_auth_client_secret = "secret://op://{vaults.app}/GOOGLE_O_AUTH_CLIENT/credential"
 anthropic_api_key = "secret://op://{vaults.app}/ANTHROPIC/credential"
-# Shared bearer token the mobile app presents to the mobile-api service.
-mobile_api_token = "secret://op://{vaults.app}/MOBILE_API_TOKEN/credential"
 
 [runtime]
 container = "podman"

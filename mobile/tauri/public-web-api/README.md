@@ -2,18 +2,18 @@
 
 The example app: a server scrapes a public API on a schedule; the app mirrors the feed into on-device SQLite, polls for anything new while it is running, and fires a local notification when something arrives.
 
-- **`server/`** — Axum + SQLite + Apalis on `generic-rust-core`. Scheduler → `PollStoriesTask` → Hacker News top stories over plain `reqwest` → `stories` table → `StoryEvent::New` on the event bus. Serves `GET /api/v0/stories` (cursor-paged), `POST /api/v0/devices`, `GET /api/v0/events` (SSE) behind a bearer token. Deployed as `mobile-api` (`config/deploy/mobile-api.yml`).
+- **`server/`** — Axum + SQLite + Apalis on `generic-rust-core`. Scheduler → `PollStoriesTask` → Hacker News top stories over plain `reqwest` → `stories` table → `StoryEvent::New` on the event bus. Serves `GET /api/v0/stories` (cursor-paged), `POST /api/v0/devices`, `GET /api/v0/events` (SSE), all open — it is a free public API. Deployed as `mobile-api` (`config/deploy/mobile-api.yml`).
 - **`app/`** — Tauri 2. `src-tauri/` opens the device DB with `mobile-std`, runs a 60s `Poller` calling `sync::run`, and exposes `get_status`, `save_settings`, `test_connection`, `reset_data`, `list_stories`, `sync_now`, `open_story`. `src/` is a two-tab React UI (Stories, Settings).
 
 ## Run it
 
 ```bash
 cd mobile/tauri
-make dev-server          # terminal 1: http://localhost:9100, token dev-token
+make dev-server          # terminal 1: http://localhost:9100
 make dev                 # terminal 2: desktop app
 ```
 
-In the app's Settings tab enter `http://localhost:9100` and `dev-token`, Test, Save. The Stories tab fills on the next sync (Save triggers one). Lower `POLL_INTERVAL_SECS` on the server to watch "new story" notifications arrive.
+Debug builds (`make dev`, `make dev-ios`, `make dev-android`) point at the local server out of the box; the Stories tab fills on the first sync. Production builds default to the deployed `mobile-api` domain, and Settings overrides either. Lower `POLL_INTERVAL_SECS` on the server to watch "new story" notifications arrive.
 
 Server env and routes: see `server/src/config.rs` and the wiki's *Mobile → API server*. Device-side patterns: `../std/README.md`.
 

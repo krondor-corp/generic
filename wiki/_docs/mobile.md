@@ -40,7 +40,7 @@ The app itself is not deployed by Kamal; it is built with the Tauri CLI for iOS,
 ```bash
 cd mobile/tauri
 make install          # cargo fetch + pnpm install
-make dev-server       # API server on :9100 with API_TOKEN=dev-token
+make dev-server       # API server on :9100, no auth
 make dev              # desktop app (fastest inner loop)
 make dev-ios          # iOS simulator (run make init-ios once first)
 make dev-android      # Android emulator (run make init-android once first)

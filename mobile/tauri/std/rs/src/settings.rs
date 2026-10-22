@@ -1,5 +1,5 @@
 //! A string key/value table for small, mutable app state: the server URL,
-//! the API token, sync cursors, flags.
+//! sync cursors, flags.
 //!
 //! Lives in its own table (`kv`) that [`crate::db::open`] creates
 //! outside the app's migrations, so every app gets it without a
@@ -74,7 +74,6 @@ impl Settings {
 /// Keys the std lib itself reads. Apps add their own alongside.
 pub mod keys {
     pub const SERVER_URL: &str = "server.url";
-    pub const SERVER_TOKEN: &str = "server.token";
     pub const DEVICE_ID: &str = "device.id";
     pub const DEVICE_NAME: &str = "device.name";
 }

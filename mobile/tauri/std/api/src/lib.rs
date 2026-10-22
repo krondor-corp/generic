@@ -17,9 +17,11 @@
 //! }
 //! ```
 //!
-//! Auth is a property of the *client*, not the request:
-//! [`Client::with_bearer`] attaches `Authorization: Bearer <token>` to
-//! every call, so request types stay auth-agnostic.
+//! The example server is a free public API, so [`Client::new`] is all the
+//! app needs. If a server ever wants auth, it is a property of the
+//! *client*, not the request: [`Client::with_bearer`] attaches
+//! `Authorization: Bearer <token>` to every call and request types stay
+//! auth-agnostic.
 //!
 //! ## Modules
 //!

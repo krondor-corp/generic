@@ -13,9 +13,9 @@
 //! Modules:
 //!
 //! - [`db`] — open + migrate SQLite under the platform app-data dir.
-//! - [`settings`] — string KV table (`kv`) for server URL, token, cursors.
+//! - [`settings`] — string KV table (`kv`) for server URL, cursors, flags.
 //! - [`identity`] — stable per-install `device_id` + a display name.
-//! - [`api`] — build a bearer-authed [`mobile_api::Client`] from settings.
+//! - [`api`] — build a [`mobile_api::Client`] for the configured server.
 //! - [`notify`] — local notifications with permission handling.
 //! - [`poller`] — a named foreground loop: run `f` every `interval`, or
 //!   now on `trigger()`, until `stop()`.

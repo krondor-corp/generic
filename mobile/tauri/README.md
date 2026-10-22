@@ -24,8 +24,8 @@ Two workspaces, one directory: `Cargo.toml` (Rust) and `pnpm-workspace.yaml` (TS
 
 ```bash
 make install        # cargo fetch + pnpm install
-make dev-server     # API server on :9100 (API_TOKEN=dev-token)
-make dev            # desktop app — set server to http://localhost:9100 / dev-token in Settings
+make dev-server     # API server on :9100, no auth
+make dev            # desktop app, pointed at http://localhost:9100 (override in Settings)
 make check          # fmt-check, clippy, typecheck, tests
 ```
 

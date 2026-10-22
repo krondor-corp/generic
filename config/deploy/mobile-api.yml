@@ -30,8 +30,6 @@ proxy:
     path: /_status/livez
 
 env:
-  secret:
-    - API_TOKEN
   clear:
     SQLITE_DATABASE_URL: sqlite:///data/app.db
     LISTEN_ADDRESS: 0.0.0.0:3000

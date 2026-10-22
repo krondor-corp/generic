@@ -8,10 +8,6 @@ pub struct Config {
     pub listen_address: SocketAddr,
     pub sqlite_database_url: Url,
     pub log_level: tracing::Level,
-    /// Shared bearer token every device presents. One token for the
-    /// whole deployment is the simplest thing that keeps the API off the
-    /// open internet; per-device credentials are a follow-up.
-    pub api_token: String,
     /// How often the scheduler enqueues a poll of upstream.
     pub poll_interval: Duration,
     /// How many of upstream's top stories to consider per poll.
@@ -28,8 +24,6 @@ pub enum ConfigError {
     InvalidUrl(#[from] url::ParseError),
     #[error("invalid integer in {0}")]
     InvalidInt(&'static str),
-    #[error("missing required env var: {0}")]
-    MissingEnv(String),
 }
 
 impl Config {
@@ -47,9 +41,6 @@ impl Config {
             .unwrap_or_else(|_| "info".to_string())
             .parse()
             .unwrap_or(tracing::Level::INFO);
-
-        let api_token =
-            std::env::var("API_TOKEN").map_err(|_| ConfigError::MissingEnv("API_TOKEN".into()))?;
 
         let poll_interval = Duration::from_secs(
             std::env::var("POLL_INTERVAL_SECS")
@@ -72,7 +63,6 @@ impl Config {
             listen_address,
             sqlite_database_url,
             log_level,
-            api_token,
             poll_interval,
             poll_limit,
             upstream_base_url,

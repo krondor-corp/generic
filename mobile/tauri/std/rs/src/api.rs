@@ -11,17 +11,15 @@ use crate::{Error, Result};
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct ServerConfig {
     pub url: String,
-    pub token: String,
 }
 
 impl ServerConfig {
     pub async fn load(settings: &Settings) -> Result<Option<Self>> {
-        let url = settings.get(keys::SERVER_URL).await?;
-        let token = settings.get(keys::SERVER_TOKEN).await?;
-        Ok(match (url, token) {
-            (Some(url), Some(token)) if !url.is_empty() => Some(Self { url, token }),
-            _ => None,
-        })
+        Ok(settings
+            .get(keys::SERVER_URL)
+            .await?
+            .filter(|url| !url.is_empty())
+            .map(|url| Self { url }))
     }
 
     pub async fn save(&self, settings: &Settings) -> Result<()> {
@@ -29,20 +27,32 @@ impl ServerConfig {
         // on the next sync.
         Url::parse(&self.url)?;
         settings.set(keys::SERVER_URL, &self.url).await?;
-        settings.set(keys::SERVER_TOKEN, &self.token).await?;
+        Ok(())
+    }
+
+    /// Write `url` only if nothing is saved yet, so a fresh install points
+    /// somewhere useful without a setup screen and a user's override sticks.
+    pub async fn seed_default(settings: &Settings, url: &str) -> Result<()> {
+        if Self::load(settings).await?.is_none() {
+            Self {
+                url: url.to_string(),
+            }
+            .save(settings)
+            .await?;
+        }
         Ok(())
     }
 
     pub fn client(&self) -> Result<Client> {
         let base = Url::parse(&self.url)?;
-        Ok(Client::with_bearer(&base, &self.token)?)
+        Ok(Client::new(&base)?)
     }
 }
 
-/// Load settings and build an authed client, or `NotConfigured`.
+/// Load settings and build a client, or `NotConfigured`.
 pub async fn client(settings: &Settings) -> Result<Client> {
     ServerConfig::load(settings)
         .await?
-        .ok_or(Error::NotConfigured("server url and token"))?
+        .ok_or(Error::NotConfigured("server url"))?
         .client()
 }

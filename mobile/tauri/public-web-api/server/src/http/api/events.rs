@@ -13,11 +13,9 @@ use tokio_stream::wrappers::BroadcastStream;
 use tokio_stream::StreamExt;
 
 use crate::events::AppEvent;
-use crate::http::auth::RequireBearer;
 use crate::state::AppState;
 
 pub async fn handler(
-    RequireBearer: RequireBearer,
     State(state): State<AppState>,
 ) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
     let rx = state.events.subscribe();

@@ -34,6 +34,10 @@ help: ## Show this help message
 
 # -- Dev --
 
+# Debug builds of the app point a fresh install at the local server on
+# :$(SERVER_PORT) (DEFAULT_SERVER_URL in the app's state.rs); release
+# builds default to the deployed mobile-api domain. Settings overrides.
+
 .PHONY: dev
 dev: ## Run the example app on desktop
 	@pnpm --dir $(APP_DIR) tauri dev $(ARGS)
@@ -49,10 +53,9 @@ dev-android: ## Run the example app in the Android emulator
 .PHONY: dev-server
 dev-server: ## Run the API server locally
 	@mkdir -p $(SERVER_DIR)/data
-	@confit log "Starting mobile-api on http://localhost:$(SERVER_PORT) (API_TOKEN=dev-token) ..."
+	@confit log "Starting mobile-api on http://localhost:$(SERVER_PORT)..."
 	@env SQLITE_DATABASE_URL=sqlite://$(SERVER_DIR)/data/app.db \
 		LISTEN_ADDRESS=127.0.0.1:$(SERVER_PORT) \
-		API_TOKEN=$${API_TOKEN:-dev-token} \
 		POLL_INTERVAL_SECS=$${POLL_INTERVAL_SECS:-120} \
 		cargo watch -x "run -p public-web-api"
 

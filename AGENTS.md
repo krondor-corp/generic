@@ -105,7 +105,7 @@ session.query(Model).filter(Model.status == MyEnum.ACTIVE)
 
 - **Shape**: server owns always-on work (scraping, jobs) on `generic-rust-core`; device keeps a SQLite mirror, polls "since cursor" while running, notifies locally. The webview is a view — network/storage/notifications happen in Rust.
 - **Std libs**: `std/api` (`mobile-api`: `ApiRequest`/`Client` contract, one file per endpoint, compiled by app and server), `std/rs` (`mobile-std`: db, settings kv, identity, api client, notify, poller, `Error`), `std/ts` (`@mobile/std`: `command()`, `useTauriEvent()` only).
-- **Example**: `public-web-api/` — `server/` (Axum, Scheduler → Apalis `PollStoriesTask` → Hacker News over plain reqwest; bearer auth) and `app/` (Tauri 2 + React; `src-tauri/src/sync.rs` is the sync pass).
+- **Example**: `public-web-api/` — `server/` (Axum, Scheduler → Apalis `PollStoriesTask` → Hacker News over plain reqwest; open, no auth) and `app/` (Tauri 2 + React; `src-tauri/src/sync.rs` is the sync pass).
 - **Workspaces**: `mobile/tauri/Cargo.toml` + `pnpm-workspace.yaml`. Tauri pinned to 2 stable (3.0 alpha is "latest" on crates.io). `make dev` (desktop), `make dev-ios`, `make dev-android`, `make dev-server`.
 - **Adding an endpoint**: request type in `std/api` (doc the route) → handler file in `server/src/http/api/<resource>/` → command in `app/src-tauri/src/commands/` → name it in `app/src/api.ts`.
 - Device-side `src-tauri/gen/` is generated per machine (`make init-ios`/`init-android`) and gitignored. Icons come from `app-icon.png` via `make icons`.

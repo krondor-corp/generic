@@ -5,12 +5,10 @@ use axum::Json;
 use mobile_api::stories::{StoriesRequest, StoriesResponse, DEFAULT_LIMIT, MAX_LIMIT};
 
 use crate::database::models::Story;
-use crate::http::auth::RequireBearer;
 use crate::http::error::ApiError;
 use crate::state::AppState;
 
 pub async fn handler(
-    RequireBearer: RequireBearer,
     State(state): State<AppState>,
     Query(query): Query<StoriesRequest>,
 ) -> Result<Json<StoriesResponse>, ApiError> {

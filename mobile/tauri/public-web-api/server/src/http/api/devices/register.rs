@@ -5,12 +5,10 @@ use axum::Json;
 use mobile_api::devices::{Device as WireDevice, RegisterDeviceRequest};
 
 use crate::database::models::Device;
-use crate::http::auth::RequireBearer;
 use crate::http::error::ApiError;
 use crate::state::AppState;
 
 pub async fn handler(
-    RequireBearer: RequireBearer,
     State(state): State<AppState>,
     Json(body): Json<RegisterDeviceRequest>,
 ) -> Result<Json<WireDevice>, ApiError> {

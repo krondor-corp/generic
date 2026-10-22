@@ -15,7 +15,6 @@ use crate::version::VERSION;
 pub struct AppState {
     pub database: Database,
     pub listen_address: SocketAddr,
-    pub api_token: String,
     pub poll_interval: Duration,
     pub poll_limit: usize,
     pub upstream: HackerNews,
@@ -41,7 +40,6 @@ impl AppState {
         Ok(Self {
             database,
             listen_address: config.listen_address,
-            api_token: config.api_token.clone(),
             poll_interval: config.poll_interval,
             poll_limit: config.poll_limit,
             upstream,

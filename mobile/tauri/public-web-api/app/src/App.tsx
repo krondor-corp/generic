@@ -141,21 +141,19 @@ function Stories({
 
 function Settings({ status, onSaved }: { status: Status | null; onSaved: () => Promise<void> }) {
   const [url, setUrl] = useState("");
-  const [token, setToken] = useState("");
   const [deviceName, setDeviceName] = useState("");
   const [result, setResult] = useState<string | null>(null);
 
   useEffect(() => {
     if (!status) return;
     setUrl(status.server?.url ?? "");
-    setToken(status.server?.token ?? "");
     setDeviceName(status.device.name);
   }, [status]);
 
   const onTest = async () => {
     setResult("Testing…");
     try {
-      setResult(await testConnection({ url, token }));
+      setResult(await testConnection({ url }));
     } catch (e) {
       setResult(String(e));
     }
@@ -164,7 +162,7 @@ function Settings({ status, onSaved }: { status: Status | null; onSaved: () => P
   const onSave = async () => {
     setResult(null);
     try {
-      await saveSettings({ url, token, deviceName });
+      await saveSettings({ url, deviceName });
       setResult("Saved");
       await onSaved();
     } catch (e) {
@@ -197,19 +195,9 @@ function Settings({ status, onSaved }: { status: Status | null; onSaved: () => P
             inputMode="url"
             autoCapitalize="off"
             autoCorrect="off"
-            placeholder="https://mobile-api.example.org"
+            placeholder="https://mobile-api.generic.krondor.org"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-          />
-        </label>
-        <label>
-          API token
-          <input
-            type="password"
-            autoCapitalize="off"
-            autoCorrect="off"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
           />
         </label>
         <label>
@@ -220,7 +208,7 @@ function Settings({ status, onSaved }: { status: Status | null; onSaved: () => P
           <button type="button" onClick={onTest} disabled={!url}>
             Test
           </button>
-          <button type="submit" disabled={!url || !token}>
+          <button type="submit" disabled={!url}>
             Save
           </button>
         </div>

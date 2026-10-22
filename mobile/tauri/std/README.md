@@ -23,7 +23,7 @@ The server owns everything that must happen whether or not a phone is awake. The
 
 - One request type per endpoint, one file per endpoint, implementing `ApiRequest` (`build_request(self, base, http) -> RequestBuilder`).
 - `Client::call(req)` executes and decodes `req::Response`. Non-2xx → `ApiError::HttpStatus`. Empty 2xx body decodes as `()`.
-- Auth lives on the client (`Client::with_bearer`), never on request types.
+- The server is open; `Client::new` is enough. If a server needs auth it lives on the client (`Client::with_bearer`), never on request types.
 - Wire types shared by several endpoints live in the resource's `mod.rs`. Event payloads for SSE live in `events.rs`.
 - Each request's doc comment says **which server route it mirrors**. Paths are the one thing the compiler cannot check — keep them in lockstep.
 
@@ -43,7 +43,7 @@ Rules of thumb:
 
 - **Apps own their schema.** `mobile_std::db::open` takes the app's `sqlx::migrate!()`. Only the `kv` table is created by the library.
 - **Settings are strings.** `Settings::{get,set,delete}` plus `get_i64/set_i64` for cursors. Anything structured gets a real table.
-- **Rebuild the API client per call.** `mobile_std::api::client(&settings)` reads the saved URL + token each time; settings changes apply instantly.
+- **Rebuild the API client per call.** `mobile_std::api::client(&settings)` reads the saved URL each time; settings changes apply instantly.
 - **`notify` never fails the sync.** Denied permission logs and returns `Ok`.
 - **The poller is foreground-only.** Mobile OSes suspend the process; `tokio::time::interval` does not wake a phone. Server push (APNs/FCM) is the answer when that matters, and it is not in this example.
 - **Return `mobile_std::Result<T>` from commands.** The frontend receives the display string.

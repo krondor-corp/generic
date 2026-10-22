@@ -16,11 +16,11 @@ Three packages under `mobile/tauri/std/`:
 The HTTP contract. Each endpoint is a request type that implements `ApiRequest` — it builds its own `reqwest::RequestBuilder` (method, path, query, body) — and a generic `Client` executes it and decodes the typed response:
 
 ```rust
-let client = Client::with_bearer(&base_url, &token)?;
+let client = Client::new(&base_url)?;
 let page = client.call(StoriesRequest { since: Some(cursor), limit: None }).await?;
 ```
 
-Auth is a property of the client (`with_bearer`), not the request, so request types stay auth-agnostic. One file per endpoint; the doc comment on each request names the server route it mirrors. The server compiles the same crate, so wire types cannot drift — only paths can, and those are documented side by side.
+The server is a free public API, so `Client::new` is all the app uses; if a server needs auth it is a property of the client (`with_bearer`), not the request, so request types stay auth-agnostic. One file per endpoint; the doc comment on each request names the server route it mirrors. The server compiles the same crate, so wire types cannot drift — only paths can, and those are documented side by side.
 
 ### `mobile-std` (Rust, `std/rs`)
 
@@ -29,9 +29,9 @@ What every app's `src-tauri` would otherwise reimplement:
 | Module | What it does |
 |--------|--------------|
 | `db` | Opens `app.db` under Tauri's app-data dir and runs the app's `sqlx::migrate!()`. Uses `generic-rust-core` with only the `database` feature, so the phone build never links axum or apalis. |
-| `settings` | A `kv` table for small mutable state: server URL, token, cursors. Created outside migrations so every app gets it for free. |
+| `settings` | A `kv` table for small mutable state: server URL, cursors. Created outside migrations so every app gets it for free. |
 | `identity` | A per-install `device_id` minted on first launch, plus a display name. |
-| `api` | `ServerConfig::load/save` and `client(&settings)` → a bearer-authed `mobile_api::Client`. |
+| `api` | `ServerConfig::load/save/seed_default` and `client(&settings)` → a `mobile_api::Client` for the saved server URL. |
 | `notify` | Local notifications via `tauri-plugin-notification`, with permission prompting. No-ops if denied. |
 | `poller` | A named foreground loop: run `f(app)` every `interval`, now on `trigger()`, until `stop()`. |
 | `Error` | One error enum, `Serialize`d as its display string so commands can return it directly. |
