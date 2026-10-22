@@ -12,7 +12,7 @@ members = [
     "std/api",
     "std/rs",
     "public-web-api/server",
-#    "public-web-api/app/src-tauri",
+    "public-web-api/app/src-tauri",
 ]
 
 [workspace.package]

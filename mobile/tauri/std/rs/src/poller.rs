@@ -25,11 +25,19 @@ pub struct Poller {
 }
 
 impl Poller {
-    pub fn spawn<R, F, Fut>(app: AppHandle<R>, name: &'static str, interval: Duration, f: F) -> Self
+    /// `f`'s `Ok` value is discarded here — the same function can return a
+    /// report to a command caller and nothing to the loop.
+    pub fn spawn<R, F, Fut, T>(
+        app: AppHandle<R>,
+        name: &'static str,
+        interval: Duration,
+        f: F,
+    ) -> Self
     where
         R: Runtime,
         F: Fn(AppHandle<R>) -> Fut + Send + Sync + 'static,
-        Fut: Future<Output = crate::Result<()>> + Send + 'static,
+        Fut: Future<Output = crate::Result<T>> + Send + 'static,
+        T: Send + 'static,
     {
         let trigger = Arc::new(Notify::new());
         let (stop, mut stopped) = watch::channel(false);

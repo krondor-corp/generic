@@ -1,0 +1,3 @@
+packages:
+  - std/ts
+  - public-web-api/app

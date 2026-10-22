@@ -1,0 +1,17 @@
+{
+  "name": "mobile-tauri",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.6.2",
+  "scripts": {
+    "fmt": "pnpm -r fmt",
+    "fmt-check": "pnpm -r fmt-check",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}
