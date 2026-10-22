@@ -36,6 +36,40 @@ impl Platform {
             Platform::Unknown
         }
     }
+
+    /// Lowercase wire/database form, matching the serde representation.
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Platform::Ios => "ios",
+            Platform::Android => "android",
+            Platform::Macos => "macos",
+            Platform::Windows => "windows",
+            Platform::Linux => "linux",
+            Platform::Unknown => "unknown",
+        }
+    }
+}
+
+impl std::fmt::Display for Platform {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl std::str::FromStr for Platform {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "ios" => Platform::Ios,
+            "android" => Platform::Android,
+            "macos" => Platform::Macos,
+            "windows" => Platform::Windows,
+            "linux" => Platform::Linux,
+            "unknown" => Platform::Unknown,
+            other => return Err(format!("unknown platform: {other}")),
+        })
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

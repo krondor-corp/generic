@@ -1,0 +1,43 @@
+service: <%= `confit resolve project.name`.strip %>-mobile-api
+deploy_timeout: 180
+image: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>/<%= `confit resolve project.name`.strip %>-mobile-api
+
+servers:
+  web:
+    - <%= `confit --set stage=production resolve credentials.server.ip`.strip %>
+
+ssh:
+  user: kamal
+
+registry:
+  username: <%= `confit resolve credentials.cloud.docker_hub_username`.strip %>
+  password:
+    - DOCKER_HUB_TOKEN
+
+# Context is the repo root: the server depends on web/rust/crates/core by path.
+builder:
+  dockerfile: mobile/tauri/public-web-api/server/Dockerfile
+  context: .
+  arch: amd64
+  cache:
+    type: registry
+
+proxy:
+  ssl: true
+  host: <%= `confit resolve services.mobile-api.domain`.strip %>
+  app_port: <%= `confit resolve services.mobile-api.port`.strip %>
+  healthcheck:
+    path: /_status/livez
+
+env:
+  secret:
+    - API_TOKEN
+  clear:
+    SQLITE_DATABASE_URL: sqlite:///data/app.db
+    LISTEN_ADDRESS: 0.0.0.0:3000
+    LOG_LEVEL: info
+    POLL_INTERVAL_SECS: 300
+    POLL_LIMIT: 30
+
+volumes:
+  - /var/lib/kamal-volumes/<%= `confit resolve project.name`.strip %>-mobile-api/data:/data

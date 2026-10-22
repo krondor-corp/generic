@@ -1,0 +1,25 @@
+# Used by builds whose context is the repo root (mobile/tauri/public-web-api/server).
+# web/ services build with context web/ and use web/<service>/.dockerignore.
+.git/
+.github/
+.kamal/
+.claude/
+ansible/
+iac/
+wiki/
+config/
+bin/
+web/py/
+web/ts/
+web/rust/target/
+web/rust/data/
+mobile/tauri/target/
+mobile/tauri/node_modules/
+mobile/tauri/**/node_modules/
+mobile/tauri/**/dist/
+mobile/tauri/**/data/
+mobile/tauri/**/gen/
+**/*.md
+!**/README.md
+**/.env
+**/*.log
