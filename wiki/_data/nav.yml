@@ -31,6 +31,12 @@
   items:
     - ts-web
 
+- title: Mobile
+  items:
+    - mobile
+    - mobile-tauri
+    - mobile-api-server
+
 - title: Development
   items:
     - local-dev

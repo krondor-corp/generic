@@ -7,27 +7,22 @@ Background jobs in the Rust service use [Apalis](https://github.com/geofmureithi
 
 ## The Task trait
 
-Each background job implements the `Task` trait in `tasks/`:
+The trait lives in `generic-rust-core` (`web/rust/crates/core/src/tasks/mod.rs`) and is shared with the mobile API server. Each background job implements it in the app's `tasks/`:
 
 ```rust
-#[async_trait]
-pub trait Task: Serialize + DeserializeOwned + Send + 'static {
+pub trait Task: Serialize + DeserializeOwned + Send + Sync + Unpin + 'static {
+    /// What the handler needs injected — the app's `TaskContext` (db, events, ...).
+    type Context: Clone + Send + Sync + 'static;
+
     /// Identifier for this worker, used in logging and registration.
     const WORKER_NAME: &'static str;
 
-    /// Register this task type with the Apalis worker builder.
-    fn register(
-        worker: WorkerBuilder<Context>,
-        state: AppState,
-        storage: SqliteStorage<Self>,
-    ) -> WorkerBuilder<Context>
-    where
-        Self: Sized;
-
-    /// Push a new instance of this task onto the queue.
-    async fn push(storage: &SqliteStorage<Self>, task: Self) -> Result<()>;
+    /// Create this task's SqliteStorage + WorkerBuilder and register it with the monitor.
+    fn register(monitor: Monitor, ctx: Self::Context) -> Monitor;
 }
 ```
+
+Enqueueing is uniform, so it is not on the trait: `state.tasks.push(task)` (a `TaskProducer`) or `generic_rust_core::tasks::push(task, &db)`. Each app defines a `TaskContext` struct and a `TaskWorker` service that registers every task type and hands the monitor to `generic_rust_core::tasks::run_monitor`.
 
 Each task is a plain struct that derives `Serialize` and `Deserialize`. Apalis handles serialization to and from the SQLite job queue.
 

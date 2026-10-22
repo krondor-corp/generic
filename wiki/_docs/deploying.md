@@ -25,7 +25,7 @@ bin/kamal py deploy
 1. `bin/kamal` wraps itself in `confit ssh` to load the Terraform-generated deploy key
 2. Kamal reads the service config from `config/deploy/<service>.yml`
 3. Secrets are injected from `.kamal/secrets`, which calls `confit resolve --reveal`
-4. Kamal builds the Docker image (context: `web/`, dockerfile: `web/<service>/Dockerfile`)
+4. Kamal builds the Docker image (context: `web/`, dockerfile: `web/<service>/Dockerfile`; `mobile-api` uses the repo root as context because it depends on `web/rust/crates/core` by path)
 5. The image is pushed to Docker Hub and deployed with zero-downtime rolling updates
 
 ## Service configs

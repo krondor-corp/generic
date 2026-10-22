@@ -5,6 +5,8 @@ order: 12
 
 The Rust service lives at `web/rust/` and is deployed via Kamal with the config at `config/deploy/rust.yml`.
 
+It is two crates: `crates/core` (`generic-rust-core`) holds the application-agnostic runtime — `Service` trait and graceful shutdown, the SQLite `Database` wrapper, `EventBus<E>`, the Apalis `Task` trait, `/_status` health routes, logging — behind cargo features; `crates/app` is this site. The [mobile API server](mobile-api-server) is built on the same core crate.
+
 ## Overview
 
 The Rust stack is for lightweight, self-contained apps that don't need a separate frontend build or JavaScript framework. It compiles to a single binary with zero runtime dependencies. Pages are server-rendered with Askama templates and enhanced with HTMX for interactivity and SSE for real-time updates.
