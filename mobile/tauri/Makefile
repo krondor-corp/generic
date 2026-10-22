@@ -114,7 +114,29 @@ types: ## Type-check TS
 	cargo check --workspace
 	pnpm -r typecheck
 
+# Xcode keeps this app's intermediates outside the repo, keyed by project name.
+XCODE_DERIVED := $(HOME)/Library/Developer/Xcode/DerivedData/public-web-api-app-*
+
 .PHONY: clean
-clean: ## Clean build artifacts
+clean: clean-rust clean-js clean-xcode ## Clean all build artifacts (Rust, JS, Xcode)
+
+.PHONY: clean-rust
+clean-rust: ## Remove the cargo target dir (desktop + iOS/Android triples)
 	cargo clean
+
+.PHONY: clean-js
+clean-js: ## Remove node_modules and frontend dist
 	rm -rf node_modules std/ts/node_modules std/ts/dist $(APP_DIR)/node_modules $(APP_DIR)/dist
+
+.PHONY: clean-xcode
+clean-xcode: ## Remove Xcode DerivedData and the iOS project's build output (keeps gen/apple)
+	rm -rf $(XCODE_DERIVED)
+	rm -rf $(APP_DIR)/src-tauri/gen/apple/build $(APP_DIR)/src-tauri/gen/apple/Externals/*
+
+.PHONY: clean-gen
+clean-gen: ## Remove generated per-platform projects (re-create with init-ios / init-android)
+	rm -rf $(APP_DIR)/src-tauri/gen
+
+.PHONY: du
+du: ## Show what the build artifacts are costing on disk
+	@du -sh target $(APP_DIR)/src-tauri/gen/apple/build $(XCODE_DERIVED) node_modules 2>/dev/null || true

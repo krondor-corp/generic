@@ -97,6 +97,8 @@ app.manage(poller);
 
 `src-tauri/gen/` is gitignored; regenerate it per machine. Icons are committed and regenerated from `app-icon.png` with `make icons`.
 
+**Disk.** A debug iOS build on top of desktop builds puts `target/` past 10 GB, and the iOS simulator runtime is another ~8 GB. `make du` shows what the artifacts cost; `make clean` removes Rust, JS, and Xcode DerivedData output (`clean-rust`, `clean-js`, `clean-xcode` individually; `clean-gen` also drops the generated Xcode/Android projects).
+
 ## Adding a second app
 
 1. `mkdir mobile/tauri/<name>/app` and copy `public-web-api/app` as a starting point; change `identifier` and `productName` in `tauri.conf.json`.
