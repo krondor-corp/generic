@@ -8,11 +8,13 @@ RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/li
 
 # Copy manifests first for layer caching
 COPY rust/Cargo.toml rust/Cargo.lock ./
+COPY rust/crates/core/Cargo.toml crates/core/
 COPY rust/crates/app/Cargo.toml crates/app/
 COPY rust/crates/app/build.rs crates/app/
 
 # Create dummy src for dependency caching
-RUN mkdir -p crates/app/src crates/app/bin && \
+RUN mkdir -p crates/core/src crates/app/src crates/app/bin && \
+    echo "" > crates/core/src/lib.rs && \
     echo "fn main() {}" > crates/app/src/main.rs && \
     echo "" > crates/app/src/lib.rs && \
     echo "fn main() {}" > crates/app/bin/seed.rs && \
@@ -20,6 +22,7 @@ RUN mkdir -p crates/app/src crates/app/bin && \
     cargo build --release 2>/dev/null || true
 
 # Copy real source (templates and static are compiled into the binary)
+COPY rust/crates/core/src crates/core/src
 COPY rust/crates/app/src crates/app/src
 COPY rust/crates/app/bin crates/app/bin
 COPY rust/crates/app/templates crates/app/templates

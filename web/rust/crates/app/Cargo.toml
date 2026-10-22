@@ -18,6 +18,8 @@ name = "seed"
 path = "bin/seed.rs"
 
 [dependencies]
+generic-rust-core = { path = "../core" }
+
 axum = { workspace = true }
 axum-extra = { workspace = true }
 tower = { workspace = true }

@@ -1,5 +1,5 @@
 use generic_rust_app::database::models::{User, UserPatch, Widget, WidgetPatch};
-use generic_rust_app::database::Database;
+use generic_rust_app::database::{Database, MIGRATOR};
 
 struct UserSeed {
     email: &'static str,
@@ -55,7 +55,7 @@ async fn main() {
         std::env::var("SQLITE_DATABASE_URL").unwrap_or_else(|_| "sqlite://data/app.db".to_string());
 
     let url = url::Url::parse(&database_url).expect("invalid SQLITE_DATABASE_URL");
-    let db = Database::connect(&url)
+    let db = Database::connect(&url, &MIGRATOR)
         .await
         .expect("failed to connect to database");
 

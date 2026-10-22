@@ -1,5 +1,4 @@
 pub mod auth;
-pub mod health;
 pub mod html;
 pub mod sse;
 
@@ -10,6 +9,7 @@ use tower_http::trace::TraceLayer;
 
 use crate::runtime;
 use crate::state::AppState;
+use generic_rust_core::http::health;
 
 pub struct HttpServer;
 
@@ -26,7 +26,7 @@ impl runtime::Service for HttpServer {
             .allow_origin(Any);
 
         let app = Router::new()
-            .nest("/_status", health::router(state.clone()))
+            .nest("/_status", health::router())
             .nest("/auth", auth::router())
             .nest("/_events", sse::router())
             .merge(html::router(state.clone()))

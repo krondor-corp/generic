@@ -9,6 +9,8 @@ use http::request::Parts;
 
 use crate::database::Database;
 
+// async-trait expands to a `#[must_use]` impl Future; clippy double-counts it.
+#[allow(clippy::double_must_use)]
 #[async_trait]
 pub trait DataSource {
     /// Perform various checks on the system to ensure it's healthy and ready to accept requests.

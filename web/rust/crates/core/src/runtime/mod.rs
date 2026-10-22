@@ -77,6 +77,8 @@ const REQUEST_GRACE_PERIOD: Duration = Duration::from_secs(10);
 /// Each service owns its own shutdown logic. When `shutdown_rx` fires,
 /// the service decides how to wind down: drain connections, finish current
 /// jobs, flush buffers, or just return immediately.
+// async-trait expands to a `#[must_use]` impl Future; clippy double-counts it.
+#[allow(clippy::double_must_use)]
 #[async_trait::async_trait]
 pub trait Service: Send + 'static {
     /// The shared state this service runs over. Typically `AppState`.

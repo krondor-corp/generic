@@ -7,7 +7,7 @@ use crate::database::models::{Widget, WidgetPatch};
 use crate::database::Database;
 use crate::events::widget::WidgetEvent;
 use crate::events::{AppEvent, Envelope, EventBus, Scope};
-use crate::tasks::Task;
+use crate::tasks::{Task, TaskContext};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProcessWidgetTask {
@@ -15,27 +15,20 @@ pub struct ProcessWidgetTask {
 }
 
 impl Task for ProcessWidgetTask {
+    type Context = TaskContext;
+
     const WORKER_NAME: &'static str = "process-widget-worker";
 
-    fn register(monitor: Monitor, db: Database, events: EventBus) -> Monitor {
-        let storage = SqliteStorage::<Self, (), ()>::new(&db);
+    fn register(monitor: Monitor, ctx: TaskContext) -> Monitor {
+        let storage = SqliteStorage::<Self, (), ()>::new(&ctx.db);
 
         monitor.register(move |_| {
             WorkerBuilder::new(Self::WORKER_NAME)
                 .backend(storage.clone())
-                .data(db.clone())
-                .data(events.clone())
+                .data(ctx.db.clone())
+                .data(ctx.events.clone())
                 .build(handler)
         })
-    }
-
-    async fn push(self, db: &Database) -> Result<(), anyhow::Error> {
-        let mut storage = SqliteStorage::<Self, (), ()>::new(db);
-        storage
-            .push(self)
-            .await
-            .map_err(|e| anyhow::anyhow!("failed to enqueue process task: {e}"))?;
-        Ok(())
     }
 }
 
