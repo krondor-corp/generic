@@ -56,7 +56,7 @@ jobs:
               - '.github/workflows/cd.yml'
               - '.github/workflows/deploy.yml'
             ios:
-              - 'mobile/tauri/public-web-api/server/**'
+              - 'mobile/tauri/example/server/**'
               - 'mobile/tauri/std/api/**'
               - 'mobile/tauri/Cargo.toml'
               - 'mobile/tauri/Cargo.lock'

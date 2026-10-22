@@ -16,7 +16,7 @@ registry:
 
 # Context is the repo root: the server depends on web/rust/crates/core by path.
 builder:
-  dockerfile: mobile/tauri/public-web-api/server/Dockerfile
+  dockerfile: mobile/tauri/example/server/Dockerfile
   context: .
   arch: amd64
   cache:
@@ -36,7 +36,8 @@ env:
     TESTFLIGHT_URL: "<%= `confit resolve services.ios.testflight_url`.strip %>"
     LOG_LEVEL: info
     POLL_INTERVAL_SECS: 300
-    POLL_LIMIT: 30
+    PRUNE_INTERVAL_SECS: 3600
+    RETAIN_ENTRIES: 100
 
 volumes:
   - /var/lib/kamal-volumes/<%= `confit resolve project.name`.strip %>-ios/data:/data

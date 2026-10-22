@@ -15,7 +15,7 @@ importers:
         specifier: ^5.8.3
         version: 5.9.3
 
-  public-web-api/app:
+  example/app:
     dependencies:
       '@mobile/std':
         specifier: workspace:*

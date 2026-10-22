@@ -12,9 +12,9 @@ std/
   rs/            mobile-std    On-device runtime: SQLite, settings, identity, notify, poller.
   ts/            @mobile/std   Typed command()/useTauriEvent() bridge for React.
   README.md                    The patterns.
-public-web-api/
-  app/           The example Tauri app (src/ React, src-tauri/ Rust).
-  server/        Its Axum server: marketing page + device API — deployed via Kamal as `ios`.
+example/
+  app/           The example Tauri app (src/ React, src-tauri/ Rust). Bundle id org.krondor.generic.ios.
+  server/        Its Axum server: a page + the device API — deployed via Kamal as `ios`.
   README.md
 ```
 
@@ -24,8 +24,8 @@ Two workspaces, one directory: `Cargo.toml` (Rust) and `pnpm-workspace.yaml` (TS
 
 ```bash
 make install        # cargo fetch + pnpm install
-make dev-server     # API server on :9100, no auth
-make dev            # desktop app, pointed at http://localhost:9100 (override in Settings)
+make dev-server     # server on :9100 (page + API), no auth
+make dev            # desktop app, pointed at http://localhost:9100
 make check          # fmt-check, clippy, typecheck, tests
 ```
 

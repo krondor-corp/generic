@@ -1,4 +1,4 @@
-//! HTTP contract between the mobile app and `public-web-api/server`.
+//! HTTP contract between the Tauri app and `example/server`.
 //!
 //! ## The pattern
 //!
@@ -9,10 +9,10 @@
 //! typed [`ApiRequest::Response`].
 //!
 //! ```ignore
-//! impl ApiRequest for StoriesRequest {
-//!     type Response = StoriesResponse;
+//! impl ApiRequest for EntriesRequest {
+//!     type Response = EntriesResponse;
 //!     fn build_request(self, base: &Url, http: &HttpClient) -> RequestBuilder {
-//!         http.get(base.join("/api/v0/stories").unwrap()).query(&self)
+//!         http.get(base.join("/api/v0/entries").unwrap()).query(&self)
 //!     }
 //! }
 //! ```
@@ -28,9 +28,7 @@
 //! One module per resource, one file per endpoint inside it. Wire types
 //! shared by several endpoints sit in the resource's `mod.rs`.
 //!
-//! - [`stories`] — `GET /api/v0/stories` (cursor-paged feed).
-//! - [`devices`] — `POST /api/v0/devices` (register this install).
-//! - [`events`] — the SSE event payloads on `GET /api/v0/events`.
+//! - [`entries`] — `GET /api/v0/entries` (cursor-paged feed).
 //! - [`health`] — `GET /_status/livez`.
 
 use reqwest::{Client as HttpClient, RequestBuilder};
@@ -38,10 +36,8 @@ use serde::de::DeserializeOwned;
 
 mod error;
 
-pub mod devices;
-pub mod events;
+pub mod entries;
 pub mod health;
-pub mod stories;
 
 pub use error::ApiError;
 

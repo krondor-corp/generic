@@ -11,21 +11,21 @@ mobile/
   tauri/
     std/
       api/                 # mobile-api   — HTTP contract + client (Rust, shared with the server)
-      rs/                  # mobile-std   — on-device runtime (SQLite, poller, notifications)
+      rs/                  # mobile-std   — on-device runtime (SQLite, settings, poller)
       ts/                  # @mobile/std  — typed command/event bridge for the React frontend
-    public-web-api/
+    example/
       app/                 # the Tauri app (React + Vite frontend, src-tauri Rust backend)
-      server/              # its Axum server (marketing page + API), deployed via Kamal as `ios`
+      server/              # its Axum server (page + device API), deployed via Kamal as `ios`
 ```
 
 ## The shape of a mobile app here
 
 Every example follows the same split:
 
-- **The server owns the always-on work.** Scraping, scheduled jobs, anything that must happen whether or not a phone is awake runs in an Axum service on the droplet, using the same `generic-rust-core` runtime as `web/rust` (background jobs, event bus, health checks).
-- **The device owns a mirror.** The app keeps its own SQLite database, asks the server "anything new since my cursor?" while it is running, and reacts locally — notifications, UI updates — from the diff.
+- **The server owns the always-on work.** Scheduled jobs, polling, anything that must happen whether or not a phone is awake runs in an Axum service on the droplet, using the same `generic-rust-core` runtime as `web/rust` (background jobs, event bus, health checks).
+- **The device owns a mirror.** The app keeps its own SQLite database, asks the server "anything new since my cursor?" while it is running, and reacts locally from the diff.
 - **One contract, compiled twice.** `mobile-api` defines request types and wire types once; the server's routes and the app's client both compile it.
-- **The webview is a view.** Network, storage, and notifications happen in Rust. The React frontend calls `#[tauri::command]`s and listens to events through `@mobile/std`.
+- **The webview is a view.** Network and storage happen in Rust. The React frontend calls `#[tauri::command]`s and listens to events through `@mobile/std`.
 
 ## Services
 

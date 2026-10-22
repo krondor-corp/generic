@@ -4,8 +4,8 @@ ARGS ?=
 # a pnpm workspace (std/ts, app frontend). The standard targets fan out to
 # both; dev-* pick a target platform for the example app.
 
-APP_DIR := public-web-api/app
-SERVER_DIR := public-web-api/server
+APP_DIR := example/app
+SERVER_DIR := example/server
 SERVER_PORT ?= 9100
 
 .PHONY: help
@@ -57,15 +57,20 @@ dev-server: ## Run the API server locally
 	@env SQLITE_DATABASE_URL=sqlite://$(SERVER_DIR)/data/app.db \
 		LISTEN_ADDRESS=127.0.0.1:$(SERVER_PORT) \
 		POLL_INTERVAL_SECS=$${POLL_INTERVAL_SECS:-120} \
-		cargo watch -x "run -p public-web-api"
+		cargo watch -x "run -p example-server"
 
+# `tauri {ios,android} init` writes default icons into the generated
+# project; re-run `icons` afterwards so the brand icon lands in the asset
+# catalog too (it writes both src-tauri/icons and gen/*).
 .PHONY: init-ios
 init-ios: ## Generate the Xcode project under src-tauri/gen/apple
 	@pnpm --dir $(APP_DIR) tauri ios init
+	@$(MAKE) icons
 
 .PHONY: init-android
 init-android: ## Generate the Android project under src-tauri/gen/android
 	@pnpm --dir $(APP_DIR) tauri android init
+	@$(MAKE) icons
 
 .PHONY: icons
 icons: ## Regenerate icons from app-icon.png
@@ -83,7 +88,7 @@ check: fmt-check lint types test ## Run all checks
 
 .PHONY: build
 build: ## Build server + desktop app
-	cargo build --release -p public-web-api
+	cargo build --release -p example-server
 	pnpm --dir $(APP_DIR) tauri build $(ARGS)
 
 .PHONY: build-ios
@@ -118,7 +123,7 @@ types: ## Type-check TS
 	pnpm -r typecheck
 
 # Xcode keeps this app's intermediates outside the repo, keyed by project name.
-XCODE_DERIVED := $(HOME)/Library/Developer/Xcode/DerivedData/public-web-api-app-*
+XCODE_DERIVED := $(HOME)/Library/Developer/Xcode/DerivedData/example-app-*
 
 .PHONY: clean
 clean: clean-rust clean-js clean-xcode ## Clean all build artifacts (Rust, JS, Xcode)

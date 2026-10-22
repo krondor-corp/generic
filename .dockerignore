@@ -1,4 +1,4 @@
-# Used by builds whose context is the repo root (mobile/tauri/public-web-api/server).
+# Used by builds whose context is the repo root (mobile/tauri/example/server).
 # web/ services build with context web/ and use web/<service>/.dockerignore.
 .git/
 .github/

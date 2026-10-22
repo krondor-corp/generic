@@ -2,8 +2,8 @@
 #
 #   std/api                     mobile-api        — HTTP contract + client (device <-> server)
 #   std/rs                      mobile-std        — on-device runtime (SQLite, poller, notify)
-#   public-web-api/server       public-web-api    — Axum: marketing page + device API, deployed via Kamal as `ios`
-#   public-web-api/app/src-tauri public-web-api-app — the Tauri app itself
+#   example/server              example-server    — Axum: page + device API, deployed via Kamal as `ios`
+#   example/app/src-tauri       example-app       — the Tauri app itself
 #
 # Shared plumbing comes from web/rust/crates/core by path.
 [workspace]
@@ -11,8 +11,8 @@ resolver = "2"
 members = [
     "std/api",
     "std/rs",
-    "public-web-api/server",
-    "public-web-api/app/src-tauri",
+    "example/server",
+    "example/app/src-tauri",
 ]
 
 [workspace.package]

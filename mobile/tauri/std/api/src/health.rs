@@ -10,7 +10,7 @@ pub struct HealthResponse {
     pub status: String,
 }
 
-/// Used by the settings screen's "test connection" button. **Server
+/// A cheap reachability check. **Server
 /// route to mirror:** `GET /_status/livez` (from `generic_rust_core::http::health`).
 pub struct HealthRequest;
 
