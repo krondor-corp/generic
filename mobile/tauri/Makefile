@@ -21,6 +21,7 @@ help: ## Show this help message
 	@echo '  check:        Run all checks (fmt, lint, types, test)'
 	@echo '  build:        Build server + desktop app bundle'
 	@echo '  build-ios:    Build the iOS app (needs Xcode signing)'
+	@echo '  testflight:   Build signed for App Store Connect and upload (bin/testflight)'
 	@echo '  build-android:Build the Android APK/AAB'
 	@echo '  test:         Run Rust tests'
 	@echo '  lint:         Run clippy'
@@ -94,6 +95,10 @@ build: ## Build server + desktop app
 .PHONY: build-ios
 build-ios: ## Build the iOS app
 	@pnpm --dir $(APP_DIR) tauri ios build $(ARGS)
+
+.PHONY: testflight
+testflight: ## Build signed for App Store Connect and upload to TestFlight
+	@../../bin/testflight $(ARGS)
 
 .PHONY: build-android
 build-android: ## Build the Android app

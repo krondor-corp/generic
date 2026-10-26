@@ -60,15 +60,16 @@ This runs `bin/tfc setup`, which creates the org and workspace defined in `confi
 The template expects two 1Password vaults:
 
 - **cloud** — cloud provider tokens (DigitalOcean, Cloudflare, Docker Hub, Terraform Cloud)
-- **app** — application secrets (OAuth credentials, API keys)
+- **app** — application secrets (OAuth credentials, API keys, the App Store Connect key for TestFlight)
 
 Create the required items in each vault. See [confit]({{ '/docs/confit/' | relative_url }}) for the full list of referenced paths.
 
 ## GitHub Actions
 
-Two workflows run on push to `main`:
+Three workflows run on push to `main`:
 
 - **CD** (`cd.yml`) — deploys services when their source or config changes. Can also be triggered manually from the Actions tab with a service selector.
+- **TestFlight** (`testflight.yml`) — builds the iOS app on a macOS runner and uploads it to App Store Connect when `mobile/tauri` changes. Needs the Apple setup in [Mobile → Tauri]({{ '/docs/mobile-tauri/' | relative_url }}#testflight).
 - **Pages** (`pages.yml`) — builds and deploys the wiki to GitHub Pages when `wiki/` changes.
 
 ### Repository secrets

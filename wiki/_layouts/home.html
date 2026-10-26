@@ -82,7 +82,7 @@
 
     <section class="features">
       <h2 class="section-heading">Service stacks</h2>
-      <p class="section-description">Each stack lives under <code>web/</code> with its own Makefile, Dockerfile, and dev tooling. Mix and match or use one.</p>
+      <p class="section-description">Each stack lives under <code>web/</code> or <code>mobile/</code> with its own Makefile, Dockerfile, and dev tooling. Mix and match or use one.</p>
       <div class="feature-grid">
         <div class="feature">
           <h3>TypeScript</h3>
@@ -98,6 +98,11 @@
           <h3>Rust</h3>
           <p>Axum web server with Askama templates, SQLite, and HTMX. Single binary deployment with zero runtime dependencies.</p>
           <a href="https://rust.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
+        </div>
+        <div class="feature">
+          <h3>iOS</h3>
+          <p>Tauri 2 app in Rust and React with its own Axum server. The phone mirrors the server's rows over a typed API both sides compile. Ships to TestFlight from CI.</p>
+          <a href="https://ios.generic.krondor.org" class="feature-link">Live demo &rarr;</a>
         </div>
       </div>
     </section>

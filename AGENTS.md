@@ -11,7 +11,7 @@ Wiki: https://generic.krondor.org/wiki/
 ```
 confit.toml              # Central config — all values, secrets, service definitions
 Makefile                 # Top-level targets (infra, bootstrap, kamal, ssh, wiki)
-bin/                     # Wrapper scripts
+bin/                     # Wrapper scripts (kamal, ssh, testflight, ...)
 iac/                     # Terraform modules and stages
 ansible/                 # Playbooks and tasks
 config/deploy/           # Kamal deploy configs (ERB + confit)
@@ -109,6 +109,7 @@ session.query(Model).filter(Model.status == MyEnum.ACTIVE)
 - **Workspaces**: `mobile/tauri/Cargo.toml` + `pnpm-workspace.yaml`. Tauri pinned to 2 stable (3.0 alpha is "latest" on crates.io). `make dev` (desktop), `make dev-ios`, `make dev-android`, `make dev-server`.
 - **Adding an endpoint**: request type in `std/api` (doc the route) → handler file in `server/src/http/api/<resource>/` → command in `app/src-tauri/src/commands/` → name it in `app/src/api.ts`.
 - Device-side `src-tauri/gen/` is generated per machine (`make init-ios`/`init-android`) and gitignored. Icons come from `app-icon.png` via `make icons`.
+- **TestFlight**: `bin/testflight` (root `make testflight`) builds signed for App Store Connect and uploads with `xcrun altool`; `.github/workflows/testflight.yml` runs it on push to `main`. Credentials are `credentials.apple.*` in confit (one 1Password item). Build number = UTC minute via `bundle.iOS.bundleVersion`, never Tauri's `--build-number`.
 
 ## Wiki (`wiki/`)
 

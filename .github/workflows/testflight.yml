@@ -1,0 +1,81 @@
+name: TestFlight
+
+# Builds the iOS app signed for App Store Connect and uploads it to TestFlight
+# whenever the app (or anything it compiles) changes on main. Secrets come from
+# 1Password through confit, same as the server deploys: credentials.apple.*
+# must resolve (see wiki: Mobile → Tauri → TestFlight).
+#
+# macOS minutes bill at 10x Linux; a cold build is ~15 min, cached ~5.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'mobile/tauri/example/app/**'
+      - 'mobile/tauri/std/**'
+      - 'mobile/tauri/Cargo.toml'
+      - 'mobile/tauri/Cargo.lock'
+      - 'mobile/tauri/pnpm-lock.yaml'
+      - 'mobile/tauri/Makefile'
+      - 'bin/testflight'
+      - '.github/workflows/testflight.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    runs-on: macos-15
+    environment: production
+    env:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+
+      - name: Install confit
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/krondor-corp/confit/main/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      # `tauri ios init` shells out to xcodegen; cocoapods is preinstalled.
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: mobile/tauri
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: mobile/tauri/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: mobile/tauri/pnpm-lock.yaml
+
+      - name: Install JS dependencies
+        working-directory: mobile/tauri
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and upload
+        run: ./bin/testflight
+
+      - name: Keep the .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: Generic-ios
+          path: mobile/tauri/example/app/src-tauri/gen/apple/build/arm64/*.ipa
+          retention-days: 14

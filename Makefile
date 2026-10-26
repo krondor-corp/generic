@@ -24,6 +24,9 @@ validate: ## Validate all config values resolve
 kamal: ## Run Kamal (usage: make kamal ARGS="<service> <command>")
 	@./bin/kamal $(ARGS)
 
+testflight: ## Build the iOS app and upload it to TestFlight (usage: make testflight ARGS="--skip-upload")
+	@./bin/testflight $(ARGS)
+
 ssh: ## SSH into the server (usage: make ssh USER=admin)
 	@./bin/ssh $(USER)
 

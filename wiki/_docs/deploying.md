@@ -73,3 +73,6 @@ Reference these in the Kamal config under `env.secret`.
 | py | `py.<zone>` | 8000 | Python (FastAPI) |
 | rust | `rust.<zone>` | 3000 | Rust (Axum) |
 | ts-web | `ts.<zone>` | 3000 | TypeScript (Next.js) |
+| ios | `ios.<zone>` | 3000 | Rust (Axum) — the mobile example's page + API |
+
+The iOS app itself is not a Kamal service: `make testflight` (and the `TestFlight` workflow on push to `main`) builds and uploads it to App Store Connect. See [Mobile → Tauri]({{ '/docs/mobile-tauri/' | relative_url }}#testflight).
