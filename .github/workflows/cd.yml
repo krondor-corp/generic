@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       service:
-        description: 'Service to deploy (py, ts-web, rust, or all)'
+        description: 'Service to deploy (py, ts-web, rust, ios, or all)'
         required: true
         default: 'all'
         type: choice
@@ -16,6 +16,7 @@ on:
           - py
           - ts-web
           - rust
+          - ios
 
 jobs:
   detect-changes:
@@ -25,6 +26,7 @@ jobs:
       deploy-py: ${{ steps.filter.outputs.py }}
       deploy-ts-web: ${{ steps.filter.outputs.ts-web }}
       deploy-rust: ${{ steps.filter.outputs.rust }}
+      deploy-ios: ${{ steps.filter.outputs.ios }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +52,17 @@ jobs:
               - 'web/rust/**'
               - 'bin/kamal'
               - 'config/deploy/rust.yml'
+              - '.kamal/secrets'
+              - '.github/workflows/cd.yml'
+              - '.github/workflows/deploy.yml'
+            ios:
+              - 'mobile/tauri/example/server/**'
+              - 'mobile/tauri/std/api/**'
+              - 'mobile/tauri/Cargo.toml'
+              - 'mobile/tauri/Cargo.lock'
+              - 'web/rust/crates/core/**'
+              - 'bin/kamal'
+              - 'config/deploy/ios.yml'
               - '.kamal/secrets'
               - '.github/workflows/cd.yml'
               - '.github/workflows/deploy.yml'
@@ -90,5 +103,18 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       service: rust
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  deploy-ios:
+    needs: detect-changes
+    if: |
+      always() && (
+        (github.event_name == 'push' && needs.detect-changes.outputs.deploy-ios == 'true') ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'all' || inputs.service == 'ios'))
+      )
+    uses: ./.github/workflows/deploy.yml
+    with:
+      service: ios
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

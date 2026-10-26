@@ -1,0 +1,50 @@
+# The server behind the example app, deployed as `ios` (one domain: a
+# page at `/`, the device API under `/api/v0`).
+#
+# Same shape as web/rust/crates/app (config → state → services on
+# generic-rust-core's runtime), cut to the minimum that still shows the
+# moving parts: one SQLite table, one scheduled Apalis job that writes to
+# it, one route that serves it, one Askama page.
+[package]
+name = "example-server"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[lib]
+name = "example_server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "example-server"
+path = "src/main.rs"
+
+[dependencies]
+generic-rust-core = { workspace = true, features = ["runtime", "database", "tasks", "http", "logging"] }
+mobile-api = { workspace = true }
+
+axum = { workspace = true }
+tower-http = { workspace = true }
+http = { workspace = true }
+askama = { workspace = true }
+rust-embed = { workspace = true }
+mime_guess = { workspace = true }
+
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+tracing = { workspace = true }
+
+sqlx = { workspace = true }
+apalis = { workspace = true }
+apalis-sqlite = { workspace = true }
+
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+url = { workspace = true }
+
+[build-dependencies]
+chrono = { workspace = true }

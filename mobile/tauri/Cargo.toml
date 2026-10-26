@@ -1,0 +1,83 @@
+# Rust workspace for the Tauri mobile stack.
+#
+#   std/api                     mobile-api        — HTTP contract + client (device <-> server)
+#   std/rs                      mobile-std        — on-device runtime (SQLite, poller, notify)
+#   example/server              example-server    — Axum: page + device API, deployed via Kamal as `ios`
+#   example/app/src-tauri       example-app       — the Tauri app itself
+#
+# Shared plumbing comes from web/rust/crates/core by path.
+[workspace]
+resolver = "2"
+members = [
+    "std/api",
+    "std/rs",
+    "example/server",
+    "example/app/src-tauri",
+]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+generic-rust-core = { path = "../../web/rust/crates/core", default-features = false }
+mobile-api = { path = "std/api" }
+mobile-std = { path = "std/rs" }
+
+# Core async/error handling
+anyhow = "1.0"
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "net", "signal", "sync", "time"] }
+futures = "0.3"
+async-trait = "0.1"
+thiserror = "1.0"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# HTTP — versions match web/rust so core's axum types line up
+axum = { version = "0.7", features = ["macros"] }
+tower = { version = "0.5", features = ["load-shed", "limit", "timeout", "util"] }
+tower-http = { version = "0.6", features = ["fs", "cors", "sensitive-headers", "trace", "limit", "util"] }
+http = "1.0"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+url = { version = "2.5", features = ["serde"] }
+
+# Server-rendered HTML (the server's own marketing page), as in web/rust
+askama = "0.12"
+rust-embed = "8.5"
+mime_guess = "2.0"
+
+# Logging/tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", default-features = false, features = ["env-filter", "fmt", "local-time", "time", "tracing"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "time", "macros", "uuid"] }
+tokio-stream = { version = "0.1", features = ["sync"] }
+
+# Background jobs
+apalis = "=1.0.0-rc.7"
+apalis-sqlite = "=1.0.0-rc.6"
+
+# Utilities
+uuid = { version = "1.8", features = ["v4", "serde"] }
+time = { version = "0.3", features = ["serde", "formatting", "parsing"] }
+chrono = { version = "0.4", features = ["serde"] }
+struct-patch = { version = "0.8", features = ["status"] }
+
+# Tauri 2 (stable; crates.io "latest" is a 3.0 alpha — don't float)
+tauri = { version = "2", features = [] }
+tauri-build = { version = "2", features = [] }
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

@@ -732,6 +732,7 @@ dependencies = [
  "axum-extra",
  "chrono",
  "futures",
+ "generic-rust-core",
  "http",
  "jsonwebtoken",
  "mime_guess",
@@ -753,6 +754,30 @@ dependencies = [
  "tracing-subscriber",
  "url",
  "urlencoding",
+ "uuid",
+]
+
+[[package]]
+name = "generic-rust-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "apalis",
+ "apalis-sqlite",
+ "async-trait",
+ "axum",
+ "futures",
+ "http",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "thiserror 1.0.69",
+ "tokio",
+ "tower-http",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "url",
  "uuid",
 ]
 

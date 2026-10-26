@@ -1,0 +1,5 @@
+node_modules/
+dist/
+target/
+# Generated per-platform projects and permission schemas (make init-ios / init-android)
+example/app/src-tauri/gen/

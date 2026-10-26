@@ -1,0 +1,28 @@
+{
+  "name": "@mobile/std",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Thin typed bridge from a React frontend to Tauri commands and events. Logic lives in Rust (mobile-std); this only names it.",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "fmt": "prettier --write \"src/**/*.{ts,tsx}\" --config ../../.prettierrc",
+    "fmt-check": "prettier --check \"src/**/*.{ts,tsx}\" --config ../../.prettierrc",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@tauri-apps/api": "^2",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "^2.12.0",
+    "@types/react": "^19",
+    "react": "^19",
+    "typescript": "^5.8.3"
+  }
+}

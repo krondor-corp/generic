@@ -1,0 +1,33 @@
+# On-device runtime for Tauri apps in this repo.
+#
+# What every app's `src-tauri` would otherwise re-implement: opening a
+# migrated SQLite database under the platform's app-data dir, a small
+# settings KV, a stable per-install identity, local notifications, a
+# foreground poller, and building an authed `mobile_api::Client` from
+# saved settings. Business logic (what to poll, what to notify) stays in
+# the app.
+#
+# Pulls `generic-rust-core` with only the `database` feature so the phone
+# build never links axum/apalis.
+[package]
+name = "mobile-std"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "On-device runtime shared by the Tauri apps."
+
+[dependencies]
+generic-rust-core = { workspace = true, features = ["database"] }
+mobile-api = { workspace = true }
+
+tauri = { workspace = true }
+tauri-plugin-notification = { workspace = true }
+
+tokio = { workspace = true }
+sqlx = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+url = { workspace = true }

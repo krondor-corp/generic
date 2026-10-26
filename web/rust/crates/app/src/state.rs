@@ -1,11 +1,13 @@
 use std::net::SocketAddr;
 
 use axum::extract::FromRef;
+use generic_rust_core::Version;
 
 use crate::config::Config;
-use crate::database::Database;
+use crate::database::{Database, MIGRATOR};
 use crate::events::EventBus;
 use crate::tasks::TaskProducer;
+use crate::version::VERSION;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -27,7 +29,7 @@ pub enum AppStateSetupError {
 
 impl AppState {
     pub async fn from_config(config: &Config) -> Result<Self, AppStateSetupError> {
-        let database = Database::connect(&config.sqlite_database_url).await?;
+        let database = Database::connect(&config.sqlite_database_url, &MIGRATOR).await?;
         let events = EventBus::new(256);
         let tasks = TaskProducer::new(database.clone());
 
@@ -47,5 +49,11 @@ impl AppState {
 impl FromRef<AppState> for Database {
     fn from_ref(state: &AppState) -> Self {
         state.database.clone()
+    }
+}
+
+impl FromRef<AppState> for Version {
+    fn from_ref(_: &AppState) -> Self {
+        VERSION
     }
 }

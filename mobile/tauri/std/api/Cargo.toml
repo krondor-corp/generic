@@ -1,0 +1,29 @@
+# HTTP contract between the Tauri app and example/server.
+#
+# Holds the `ApiRequest`/`Client` pattern (a request owns its own method,
+# path, body and query; the client just executes + decodes) plus every
+# endpoint's wire types. Consumers:
+#
+#   - mobile-std / the Tauri app: drives the requests through reqwest.
+#   - example/server: serializes the same wire types and compiles
+#     the same request impls its axum routes mirror. The route *paths*
+#     have no compile-time link — each request documents the route it
+#     targets; keep them in lockstep.
+#
+# No feature flags: every consumer sees the full, identical contract.
+[package]
+name = "mobile-api"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "HTTP contract + client between the mobile app and its API server."
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+reqwest = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }

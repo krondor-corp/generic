@@ -1,0 +1,3 @@
+packages:
+  - std/ts
+  - example/app

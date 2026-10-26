@@ -1,18 +1,8 @@
-use serde::Serialize;
+use generic_rust_core::Version;
 
-#[derive(Debug, Serialize)]
-pub struct Version {
-    pub version: &'static str,
-    pub build_profile: &'static str,
-    pub build_timestamp: &'static str,
-}
-
-impl Version {
-    pub fn new() -> Self {
-        Self {
-            version: env!("REPO_VERSION"),
-            build_profile: env!("BUILD_PROFILE"),
-            build_timestamp: env!("BUILD_TIMESTAMP"),
-        }
-    }
-}
+/// Build metadata baked in by `build.rs`; served at `/_status/version`.
+pub const VERSION: Version = Version::new(
+    env!("REPO_VERSION"),
+    env!("BUILD_PROFILE"),
+    env!("BUILD_TIMESTAMP"),
+);

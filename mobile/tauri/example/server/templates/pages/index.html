@@ -1,0 +1,231 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Generic — a phone app and its server, end to end{% endblock %}
+
+{% block body %}
+<!-- Header -->
+<header class="flex items-center justify-between w-full shadow-sm px-4 py-2">
+    <a href="/" class="flex items-center px-2 py-1 hover:bg-muted rounded-full">
+        <img src="/static/app-icon.png" alt="" class="h-8 w-8 mr-2 rounded-lg" />
+        <span class="font-black text-xl leading-none">generic</span>
+    </a>
+
+    <nav class="hidden sm:flex items-center gap-6 text-sm text-muted-foreground">
+        <a href="#live" class="hover:text-foreground">Live</a>
+        <a href="#how" class="hover:text-foreground">How it works</a>
+        <a href="#source" class="hover:text-foreground">Source</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+        <button id="theme-toggle" class="uk-button uk-button-ghost uk-button-icon uk-button-small" aria-label="Toggle theme">
+            <span class="relative block w-5 h-5">
+                <uk-icon icon="sun" class="js-sun-icon absolute inset-0 transition-all duration-300"></uk-icon>
+                <uk-icon icon="moon" class="js-moon-icon absolute inset-0 transition-all duration-300 opacity-0"></uk-icon>
+            </span>
+        </button>
+        {% match testflight_url %}
+        {% when Some with (url) %}
+        <a href="{{ url }}"
+           class="bg-foreground text-background px-5 py-2 hover:opacity-90 flex items-center justify-center rounded-full ml-2">
+            TestFlight &rarr;
+        </a>
+        {% when None %}
+        <a href="#how"
+           class="border border-border text-muted-foreground px-5 py-2 hover:bg-muted flex items-center justify-center rounded-full ml-2">
+            TestFlight soon
+        </a>
+        {% endmatch %}
+    </div>
+</header>
+
+<style>
+  .js-sun-icon { transform: scale(1) rotate(0deg); opacity: 1; }
+  .js-moon-icon { transform: scale(0) rotate(-90deg); opacity: 0; }
+  .dark .js-sun-icon { transform: scale(0) rotate(90deg); opacity: 0; }
+  .dark .js-moon-icon { transform: scale(1) rotate(0deg); opacity: 1; }
+</style>
+<script>
+  (function () {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      const isDark = document.documentElement.classList.contains('dark');
+      const data = JSON.parse(localStorage.getItem('__FRANKEN__') || '{}');
+      document.documentElement.classList.toggle('dark', !isDark);
+      data.mode = isDark ? 'light' : 'dark';
+      localStorage.setItem('__FRANKEN__', JSON.stringify(data));
+    });
+  })();
+</script>
+
+<main class="flex-1">
+    <!-- Hero -->
+    <section class="py-16 md:py-24">
+        <div class="uk-container">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        A phone app and its server,<br />with nothing else in the way.
+                    </h1>
+                    <p class="text-xl text-muted-foreground mb-8">
+                        A long-running Rust server with a database and one scheduled job.
+                        An iOS app that mirrors its rows into SQLite and shows them.
+                        No accounts, no analytics, no third-party SDKs. It is the smallest thing that is still real.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        {% match testflight_url %}
+                        {% when Some with (url) %}
+                        <a href="{{ url }}"
+                           class="bg-foreground text-background hover:bg-foreground/90 px-6 py-3 rounded-full flex items-center gap-2 font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                            Join the TestFlight
+                            <uk-icon icon="arrow-right" class="w-4 h-4"></uk-icon>
+                        </a>
+                        {% when None %}
+                        <span class="bg-muted text-muted-foreground px-6 py-3 rounded-full flex items-center gap-2 font-medium cursor-default">
+                            <uk-icon icon="clock" class="w-4 h-4"></uk-icon>
+                            TestFlight link coming soon
+                        </span>
+                        {% endmatch %}
+                        <a href="/api/v0/entries?limit=5"
+                           class="bg-background text-foreground hover:bg-muted border border-border px-6 py-3 rounded-full font-medium transition-all duration-200 shadow-md hover:shadow-lg">
+                            See the live API
+                        </a>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center gap-6">
+                    <img src="/static/app-icon.png" alt="Generic app icon" class="w-48 h-48 md:w-64 md:h-64 rounded-[22%] shadow-xl" />
+                    <div class="text-sm text-muted-foreground text-center">
+                        <span class="font-semibold text-foreground">{{ entry_count }}</span> rows written so far
+                        &middot; one every {{ poll_interval_mins }} min
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live -->
+    <section id="live" class="py-16 bg-muted">
+        <div class="uk-container">
+            <h2 class="text-3xl font-bold text-center mb-3">What the app is syncing right now</h2>
+            <p class="text-center text-muted-foreground mb-10">
+                These rows come straight from the server's database. The app reads the same table, from its own cursor onward.
+            </p>
+
+            {% if entries.is_empty() %}
+            <p class="text-center text-muted-foreground">Nothing yet — the first job runs right after deploy.</p>
+            {% else %}
+            <ol class="max-w-2xl mx-auto divide-y divide-border rounded-lg border border-border bg-background">
+                {% for e in entries %}
+                <li class="p-4 flex items-baseline justify-between gap-4">
+                    <span class="font-semibold">{{ e.body }}</span>
+                    <span class="text-sm text-muted-foreground font-mono whitespace-nowrap">#{{ e.seq }} &middot; {{ e.created_at }}</span>
+                </li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+
+            <p class="text-center text-sm text-muted-foreground mt-6">
+                <code>GET /api/v0/entries?since=&lt;cursor&gt;</code> returns the same thing as JSON.
+            </p>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="py-20">
+        <div class="uk-container">
+            <h2 class="text-3xl font-bold text-center mb-3">How it works</h2>
+            <p class="text-xl text-center text-muted-foreground mb-12">Phones sleep. Servers don't. Split the job accordingly.</p>
+
+            <div class="grid gap-6 md:grid-cols-3">
+                <div class="uk-card uk-card-body text-center">
+                    <uk-icon icon="server" ratio="2" class="mb-4"></uk-icon>
+                    <div class="uk-label">Server</div>
+                    <h3 class="uk-card-title mt-2">Runs a job on a schedule</h3>
+                    <p class="mt-4">An Apalis background job fires every {{ poll_interval_mins }} minutes and appends a row to SQLite with a monotonic sequence number. Swap the job body for whatever your server actually does.</p>
+                </div>
+                <div class="uk-card uk-card-body text-center">
+                    <uk-icon icon="smartphone" ratio="2" class="mb-4"></uk-icon>
+                    <div class="uk-label">Device</div>
+                    <h3 class="uk-card-title mt-2">Mirrors from a cursor</h3>
+                    <p class="mt-4">The app keeps its own SQLite copy and asks "anything past sequence N?" while it's open. Reads work offline; the first sync is a quiet backfill.</p>
+                </div>
+                <div class="uk-card uk-card-body text-center">
+                    <uk-icon icon="layers" ratio="2" class="mb-4"></uk-icon>
+                    <div class="uk-label">Shared</div>
+                    <h3 class="uk-card-title mt-2">One contract, compiled twice</h3>
+                    <p class="mt-4">The request and wire types live in one crate that both the server and the app compile, so the two sides cannot drift. The server's plumbing comes from the same core library as the web services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Source -->
+    <section id="source" class="py-16 bg-muted">
+        <div class="uk-container">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-3">Built to be copied</h2>
+                <p class="text-center text-muted-foreground mb-10">
+                    This is the <code>example</code> app from the <strong>generic</strong> monorepo: one codebase from the scheduled job to the home-screen icon. Start here and add the complicated parts yourself.
+                </p>
+                <div class="space-y-4">
+                    <a href="https://github.com/amiller68/generic/tree/main/mobile/tauri" class="flex items-start gap-4 p-4 bg-background rounded-lg border border-border hover:bg-accent">
+                        <uk-icon icon="github" class="mt-1"></uk-icon>
+                        <div>
+                            <h3 class="font-semibold mb-1">Source on GitHub</h3>
+                            <p class="text-muted-foreground text-sm">Tauri 2 + React app, Axum server on <code>generic-rust-core</code>, Kamal deploy. MIT.</p>
+                        </div>
+                    </a>
+                    <a href="https://generic.krondor.org/wiki/docs/mobile/" class="flex items-start gap-4 p-4 bg-background rounded-lg border border-border hover:bg-accent">
+                        <uk-icon icon="book-open" class="mt-1"></uk-icon>
+                        <div>
+                            <h3 class="font-semibold mb-1">How it's put together</h3>
+                            <p class="text-muted-foreground text-sm">The std libs, the server/device split, and how to add an endpoint or a second app.</p>
+                        </div>
+                    </a>
+                    <div class="flex items-start gap-4 p-4 bg-background rounded-lg border border-border">
+                        <uk-icon icon="code" class="mt-1"></uk-icon>
+                        <div>
+                            <h3 class="font-semibold mb-1">The API, in full</h3>
+                            <ul class="text-muted-foreground text-sm space-y-1 font-mono">
+                                <li><a class="hover:underline" href="/api/v0/entries?limit=5">GET /api/v0/entries?since=&amp;limit=</a></li>
+                                <li><a class="hover:underline" href="/_status/version">GET /_status/version</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-foreground text-background w-full">
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Generic</h3>
+                <p class="text-sm opacity-90">
+                    Patterns for building full stack applications with type safety and rapid iteration.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Links</h3>
+                <ul class="space-y-2 text-sm opacity-90">
+                    <li><a href="#live" class="hover:opacity-100">Live</a></li>
+                    <li><a href="#how" class="hover:opacity-100">How it works</a></li>
+                    <li><a href="https://generic.krondor.org/wiki/" class="hover:opacity-100">Wiki</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Connect</h3>
+                <a href="https://github.com/amiller68/generic" class="opacity-90 hover:opacity-100">
+                    <uk-icon icon="github" width="24" height="24"></uk-icon>
+                </a>
+            </div>
+        </div>
+        <div class="mt-8 pt-8 border-t border-background/10 text-center text-sm opacity-75">
+            &copy; 2026 Krondor Corp.
+        </div>
+    </div>
+</footer>
+{% endblock %}

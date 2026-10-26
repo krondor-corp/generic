@@ -1,0 +1,63 @@
+# Shared runtime for Rust services in this repo.
+#
+# Everything that is not specific to one application lives here: the
+# `runtime::Service` trait + graceful shutdown, the SQLite `Database`
+# wrapper and `DbUuid`, the generic `EventBus<E>`, the Apalis `Task`
+# trait + `TaskProducer`, the `/_status` health router, and logging
+# setup. Consumers:
+#
+#   - web/rust/crates/app (the HTMX site) — all features.
+#   - mobile/tauri/example/server (page + JSON API for the mobile app) — all but `events`.
+#   - mobile/tauri/std/rs (on-device Tauri runtime) — `database` only,
+#     so the phone build does not pull axum/apalis.
+#
+# Each feature is a *capability*. Default is everything; opt down with
+# `default-features = false, features = [...]`.
+[package]
+name = "generic-rust-core"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "generic_rust_core"
+path = "src/lib.rs"
+
+[features]
+default = ["runtime", "database", "events", "tasks", "http", "logging"]
+# `Service` trait + `ShutdownHandle` (SIGINT/SIGTERM orchestration).
+runtime = ["dep:tokio", "dep:futures", "dep:async-trait", "dep:tracing"]
+# `Database` (SQLite pool + migrations) and `DbUuid`.
+database = ["dep:sqlx", "dep:url", "dep:uuid", "dep:tracing"]
+# `EventBus<E>` broadcast channel with `Scope`d envelopes.
+events = ["dep:tokio", "dep:uuid"]
+# Apalis `Task` trait, `TaskProducer`, `run_monitor`.
+tasks = ["database", "dep:apalis", "dep:apalis-sqlite", "dep:anyhow", "dep:tokio", "dep:tracing"]
+# `/_status/{livez,readyz,version}` axum router.
+http = ["database", "dep:axum", "dep:tower-http", "dep:http", "dep:serde_json", "dep:async-trait", "dep:tokio", "dep:tracing"]
+# `logging::init` — compact stdout tracing subscriber + panic hook.
+logging = ["dep:tracing", "dep:tracing-subscriber", "dep:tracing-appender"]
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+
+tokio = { workspace = true, optional = true }
+futures = { workspace = true, optional = true }
+async-trait = { workspace = true, optional = true }
+tracing = { workspace = true, optional = true }
+tracing-appender = { workspace = true, optional = true }
+tracing-subscriber = { workspace = true, optional = true }
+
+sqlx = { workspace = true, optional = true }
+url = { workspace = true, optional = true }
+uuid = { workspace = true, optional = true }
+
+apalis = { workspace = true, optional = true }
+apalis-sqlite = { workspace = true, optional = true }
+anyhow = { workspace = true, optional = true }
+
+axum = { workspace = true, optional = true }
+tower-http = { workspace = true, optional = true }
+http = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }

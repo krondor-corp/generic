@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# Build the iOS app signed for App Store Connect and upload it to TestFlight.
+#
+#   bin/testflight [--build-number N] [--skip-upload]
+#
+# Signing and upload use the App Store Connect API key in confit
+# (credentials.apple.*). Xcode manages the certificate and profile itself
+# (-allowProvisioningUpdates), so nothing goes into a keychain and the same
+# command works on a laptop and on a CI runner. The build number defaults to
+# the UTC minute (YYYYMMDDHHMM) so it is unique and increasing wherever the
+# build runs; App Store Connect rejects a reused one.
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TAURI_DIR="$PROJECT_ROOT/mobile/tauri"
+APP_DIR="$TAURI_DIR/example/app"
+
+BUILD_NUMBER="$(date -u +%Y%m%d%H%M)"
+UPLOAD=1
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --build-number) BUILD_NUMBER="$2"; shift 2 ;;
+        --skip-upload) UPLOAD=0; shift ;;
+        -h|--help) sed -n '3,12p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        *) confit log --err "Unknown argument: $1"; exit 1 ;;
+    esac
+done
+
+cd "$PROJECT_ROOT"
+TEAM="$(confit resolve credentials.apple.team_id)"
+KEY_ID="$(confit resolve credentials.apple.api_key_id)"
+ISSUER="$(confit resolve credentials.apple.api_issuer_id)"
+
+# altool only finds the key in a few fixed places; ./private_keys is one of
+# them, so the upload runs from this directory. It is deleted on exit.
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
+mkdir -p "$WORK/private_keys"
+KEY_PATH="$WORK/private_keys/AuthKey_${KEY_ID}.p8"
+confit resolve --reveal credentials.apple.api_key > "$KEY_PATH"
+chmod 600 "$KEY_PATH"
+
+export APPLE_DEVELOPMENT_TEAM="$TEAM"
+export APPLE_API_KEY="$KEY_ID"
+export APPLE_API_ISSUER="$ISSUER"
+export APPLE_API_KEY_PATH="$KEY_PATH"
+export CI=true
+
+if [ ! -d "$APP_DIR/src-tauri/gen/apple" ]; then
+    confit log "Generating the Xcode project"
+    make -C "$TAURI_DIR" init-ios
+fi
+
+# CFBundleVersion comes from bundle.iOS.bundleVersion; CFBundleShortVersionString
+# stays the `version` in tauri.conf.json. (Tauri's own --build-number appends to
+# the version and makes a four-part string, which Apple rejects.)
+confit log "Building Generic build $BUILD_NUMBER for App Store Connect"
+pnpm --dir "$APP_DIR" tauri ios build --ci \
+    --export-method app-store-connect \
+    --config "{\"bundle\":{\"iOS\":{\"bundleVersion\":\"$BUILD_NUMBER\"}}}"
+
+IPA="$(find "$APP_DIR/src-tauri/gen/apple/build/arm64" -name '*.ipa' | head -1)"
+if [ -z "$IPA" ]; then
+    confit log --err "No .ipa under src-tauri/gen/apple/build/arm64"
+    exit 1
+fi
+confit log "Built $IPA"
+
+if [ "$UPLOAD" = 1 ]; then
+    confit log "Uploading to App Store Connect"
+    (cd "$WORK" && xcrun altool --upload-app --type ios --file "$IPA" \
+        --apiKey "$KEY_ID" --apiIssuer "$ISSUER")
+    confit log "Uploaded build $BUILD_NUMBER. Apple processes it for a few minutes, then it appears under TestFlight."
+fi

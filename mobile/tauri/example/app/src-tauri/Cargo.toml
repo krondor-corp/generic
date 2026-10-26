@@ -1,0 +1,30 @@
+# The Tauri app's Rust side. Thin: wires mobile-std together in `setup`,
+# owns the device schema + sync logic, exposes commands to the webview.
+[package]
+name = "example-app"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Example Tauri app: mirrors a server's rows into on-device SQLite."
+
+[lib]
+# staticlib for iOS, cdylib for Android, rlib for the desktop binary.
+name = "example_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { workspace = true }
+
+[dependencies]
+mobile-std = { workspace = true }
+mobile-api = { workspace = true }
+generic-rust-core = { workspace = true, features = ["database"] }
+
+tauri = { workspace = true }
+
+tokio = { workspace = true }
+sqlx = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

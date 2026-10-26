@@ -19,6 +19,9 @@ dist/
 # Aider
 .aider*
 
+# Jekyll build output (make wiki regenerates it; make clean removes it)
+wiki/_site/
+
 # jig
 .jig/
 jig.local.toml
