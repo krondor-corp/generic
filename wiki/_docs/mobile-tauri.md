@@ -101,23 +101,7 @@ app.manage(poller);
 
 ## TestFlight
 
-No infrastructure beyond an Apple Developer account. `bin/testflight` (also `make testflight`) builds the app signed for App Store Connect and uploads it; the `TestFlight` GitHub workflow runs the same script on a macOS runner whenever the app changes on `main`, or on demand from the Actions tab.
-
-**One-time setup, in order:**
-
-1. **Apple Developer Program** membership for the team (paid, individual or organization). Note the Team ID under *Membership details*.
-2. **App ID.** In *Certificates, Identifiers & Profiles → Identifiers*, register an App ID with the explicit bundle id `org.krondor.generic.ios` (must equal `identifier` in `tauri.conf.json`). No capabilities needed.
-3. **App record.** In App Store Connect, *Apps → +*, platform iOS, name "Generic", that bundle id, any SKU. This is the record builds attach to.
-4. **API key.** *Users and Access → Integrations → Team Keys → +*, role **Admin** (Xcode uses it to create the distribution certificate and profile on the fly, which App Manager cannot). Download the `.p8` once; Apple never shows it again.
-5. **1Password item** `APP_STORE_CONNECT` in the app vault: username = Key ID, credential = the `.p8` contents (paste the file as the password field), plus text fields `issuer` (Issuer ID, shown above the keys table) and `team` (Team ID). `confit.toml` reads these as `credentials.apple.*`; `make validate` confirms they resolve.
-6. **First upload.** `make testflight` from a Mac with Xcode. It generates the Xcode project if needed, builds with the team from confit, exports an `.ipa` for App Store Connect, and uploads it with `xcrun altool`. Apple processes the build in a few minutes; for internal testers that is all. For the public link, answer the export-compliance question once on the build (the app uses only standard HTTPS: "No" to proprietary encryption), create an external group, and submit the build for the brief beta review.
-7. **Link it.** Put the public TestFlight URL in `services.ios.testflight_url` and `make kamal ARGS="ios deploy"` so the page at `ios.generic.krondor.org` links to it.
-
-**Build numbers.** The script sets `CFBundleVersion` to the UTC minute (`YYYYMMDDHHMM`) through `bundle.iOS.bundleVersion`, so every upload is unique and increasing whether it ran on a laptop or in CI. `CFBundleShortVersionString` stays `version` from `tauri.conf.json`; bump that when you want testers to see a new version. (Tauri's own `--build-number` appends to the version and produces a four-part string App Store Connect rejects, so the script does not use it.)
-
-**CI.** `.github/workflows/testflight.yml` needs nothing beyond the existing `OP_SERVICE_ACCOUNT_TOKEN` secret: the Apple credentials come from 1Password through confit, exactly like the server deploys. Signing is automatic (`-allowProvisioningUpdates` with the API key), so no certificate or profile is stored anywhere. macOS runners bill at 10x Linux minutes; a cold build is around 15 minutes and the Rust cache brings it down to about 5.
-
-**Not TestFlight:** Android gets `make build-android` and the Play Console; the same script shape works with `bundletool` and a service-account JSON if you need it.
+`make testflight` builds the app signed for App Store Connect and uploads it; the `TestFlight` workflow does the same from CI. The Apple account setup, the build-number rule, and how the script and workflow work are in [Deploying → Publishing the iOS app]({{ '/docs/deploying/' | relative_url }}#publishing-the-ios-app).
 
 ## Adding a second app
 

@@ -1,6 +1,6 @@
 //! Shared runtime for the Rust services in this repo.
 //!
-//! Applications (`web/rust/crates/app`, `mobile/tauri/public-web-api/server`)
+//! Applications (`web/rust/crates/app`, `mobile/tauri/example/server`)
 //! own their config, models, handlers, and tasks. This crate owns the
 //! plumbing they have in common:
 //!

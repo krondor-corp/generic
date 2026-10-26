@@ -7,7 +7,7 @@
 # setup. Consumers:
 #
 #   - web/rust/crates/app (the HTMX site) — all features.
-#   - mobile/tauri/public-web-api/server (JSON API for the mobile app) — all features.
+#   - mobile/tauri/example/server (page + JSON API for the mobile app) — all but `events`.
 #   - mobile/tauri/std/rs (on-device Tauri runtime) — `database` only,
 #     so the phone build does not pull axum/apalis.
 #
