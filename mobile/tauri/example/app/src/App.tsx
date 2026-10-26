@@ -15,7 +15,9 @@ export default function App() {
   const [status, setStatus] = useState<Status | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [busy, setBusy] = useState(false);
-  const [flash, setFlash] = useState<string | null>(null);
+  // One line of feedback, rendered inside the status line so showing or
+  // changing it never shifts the layout.
+  const [note, setNote] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const [s, list] = await Promise.all([getStatus(), listEntries({ limit: 100 })]);
@@ -24,32 +26,35 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    refresh().catch((e) => setFlash(String(e)));
+    refresh().catch((e) => setNote(String(e)));
   }, [refresh]);
 
   // The Rust poller syncs on its own; we just redraw when it reports.
   useTauriEvent<SyncReport>(EVENTS.syncDone, (report) => {
-    if (report.new_count > 0) setFlash(`${report.new_count} new`);
+    if (report.new_count > 0) setNote(`${report.new_count} new`);
     refresh().catch(() => {});
   });
   useTauriEvent<string>(EVENTS.syncError, (message) => {
-    setFlash(message);
+    setNote(message);
     refresh().catch(() => {});
   });
 
   const onSync = async () => {
     setBusy(true);
-    setFlash(null);
     try {
       const report = await syncNow();
-      setFlash(report.new_count > 0 ? `${report.new_count} new` : "Up to date");
+      setNote(report.new_count > 0 ? `${report.new_count} new` : "Up to date");
     } catch (e) {
-      setFlash(String(e));
+      setNote(String(e));
     } finally {
       setBusy(false);
       refresh().catch(() => {});
     }
   };
+
+  const summary = status
+    ? `${status.last_sync_at ? `Synced ${relative(status.last_sync_at)}` : "Never synced"} · ${status.entry_count} rows`
+    : "";
 
   return (
     <div className="app">
@@ -60,19 +65,13 @@ export default function App() {
         </div>
       </header>
 
-      {flash && (
-        <div className="flash" onClick={() => setFlash(null)}>
-          {flash}
-        </div>
-      )}
-
       <main>
         <p className="about">A server writes a row every few minutes. This app mirrors it.</p>
 
         <div className="toolbar">
           <span className="muted">
-            {status?.last_sync_at ? `Synced ${relative(status.last_sync_at)}` : "Never synced"}
-            {status ? ` · ${status.entry_count} rows` : ""}
+            {summary}
+            {note ? ` · ${note}` : ""}
           </span>
           <button onClick={onSync} disabled={busy}>
             {busy ? "Syncing…" : "Sync now"}

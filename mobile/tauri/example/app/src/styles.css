@@ -119,14 +119,6 @@ main {
   font-size: 14px;
 }
 
-.flash {
-  margin: 12px 16px 0;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  background: var(--muted);
-  font-size: 14px;
-}
-
 .empty {
   color: var(--muted-foreground);
   text-align: center;
@@ -160,15 +152,18 @@ ul.entries .meta {
   white-space: nowrap;
 }
 
-/* Pill button, filled, as on the web. */
+/* Pill button, filled, as on the web. Fixed width so "Syncing…" does
+   not reflow the row. */
 button {
   font: inherit;
   font-weight: 600;
   padding: 10px 18px;
+  min-width: 7.5em;
   border-radius: 9999px;
   border: 1px solid var(--primary);
   background: var(--primary);
   color: var(--primary-foreground);
+  flex-shrink: 0;
 }
 
 button:disabled {
